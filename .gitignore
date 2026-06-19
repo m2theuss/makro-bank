@@ -1,0 +1,7 @@
+# Arquivos de compilação do Maven
+target/
+
+# Arquivos temporários e de configuração do NetBeans
+nbproject/private/
+nb-configuration.xml
+build/
