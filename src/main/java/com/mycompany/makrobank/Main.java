@@ -8,9 +8,9 @@ package com.mycompany.makrobank;
  *
  * @author matheus
  */
-public class MakroBank {
+public class Main {
 
     public static void main(String[] args) {
-        
+        System.out.println("Hello");
     }
 }
