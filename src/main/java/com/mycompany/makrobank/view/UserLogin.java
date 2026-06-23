@@ -1,10 +1,10 @@
 package com.mycompany.makrobank.view;
 import java.util.Scanner;
 
-import com.mycompany.makrobank.domain.User;
+import com.mycompany.makrobank.controller.UserLoginController;
+import com.mycompany.makrobank.model.domain.User;
 public class UserLogin {
     private Scanner scan; 
-    User
     public UserLogin(Scanner scan){
         this.scan = scan;
     }
@@ -60,5 +60,8 @@ public class UserLogin {
             }
         }
         User newUser = new User(name,password,age);
+        UserLoginController ulc = new UserLoginController();
+        ulc.createUser(newUser);
+        return true;
     }
 }
