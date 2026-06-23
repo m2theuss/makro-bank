@@ -1,6 +1,5 @@
 package com.mycompany.makrobank.config;
 import java.sql.SQLException;
-import java.sql.Connection;
 public class DBInitializer {
     public static void veriryDB(){
         var conn = DBConnection.getConnection();
@@ -8,7 +7,8 @@ public class DBInitializer {
         var query = "CREATE TABLE IF NOT EXISTS User("
                 + "name TEXT PRIMARY KEY,"
                 + "password TEXT,"
-                + "age TEXT"
+                + "age INTEGER,"
+                + "balance DOUBLE"
                 + ");";
         try(var stmt = conn.createStatement()){
             stmt.execute(query);

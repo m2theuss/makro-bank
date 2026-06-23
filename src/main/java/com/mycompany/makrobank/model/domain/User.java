@@ -11,13 +11,15 @@ package com.mycompany.makrobank.model.domain;
 public class User {
     private String name;
     private String password;
-    private String age;
+    private int age;
+    private Balance balance;
     private String makroID;
 
-    public User(String name, String password, String age) {
+    public User(String name, String password, int age, Balance balance) {
         this.name = name;
         this.password = password;
         this.age = age;
+        this.balance = balance;
     }
 
     public String getName() {
@@ -36,11 +38,29 @@ public class User {
         this.password = password;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
+    }
+    public Balance getInstanceOfBalance(){
+        return balance;
+    }
+    public static boolean canBeParsed(String valueToParse){ //try parse
+        try{
+            Integer.valueOf(valueToParse);
+            return true;
+        }catch (NumberFormatException e){
+            return false;
+        }
+    }
+    public static boolean haveAgeEnough(int age){
+        if(age > 18 && age < 99){
+            return true;
+        }
+        System.out.println("You dont have age enogh to create a account.");
+        return false;
     }
 }

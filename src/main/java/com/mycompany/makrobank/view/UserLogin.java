@@ -2,6 +2,7 @@ package com.mycompany.makrobank.view;
 import java.util.Scanner;
 
 import com.mycompany.makrobank.controller.UserLoginController;
+import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
 public class UserLogin {
     private Scanner scan; 
@@ -22,46 +23,43 @@ public class UserLogin {
                 System.out.println("Please, write some valid option.");
                 continue;
             }
-            break;
-        }
-        if(firstAction.equals("1")){
-            if(!createAccount()){
-                return;
+            if(firstAction.equals("1")){
+                if(createAccount()){
+                    System.out.println("Your account has been created successfully!");
+                }else{
+                    System.out.println("A problem happen when try to create the account, try again or later.");
+                }
             }
-
         }
     }
     public boolean createAccount(){ // returns true if the account can be created
-        String age = "";
+        int age = 0;
         String name = "";
         String password = "";
         while(true){
             System.out.print("Type a name: ");
             name = scan.nextLine();
             if(name.isEmpty()){
+                System.out.println("Write a valid name.");
                 continue;
             }
-
             System.out.print("Type a password: ");
             password = scan.nextLine();
 
-            System.out.println("Type your age (like: 20) minimum is 18 and max 99 years old: ");
-            age = scan.nextLine();
-            try{
-                int integerAge = Integer.valueOf(age);
-                if(integerAge > 18 || integerAge < 99){
-                    break;
-                }
-                System.out.println("You dont have age enough to create a account.");
-                return false;
-            }catch (NumberFormatException e){
+            System.out.print("Type your age (like: 20) minimum is 18 and max 99 years old: ");
+            String strAge = scan.nextLine();
+            
+            if(!User.canBeParsed(strAge)){
                 System.out.println("Please, write a valid age value, like '30' (write just the number).");
                 continue;
             }
+            if(!User.haveAgeEnough(Integer.valueOf(strAge))){
+                System.out.println("You dont have age enough to create a account.");
+                return false;
+            }
+            User newUser = new User(name,password,age, new Balance(0));
+            UserLoginController ulc = new UserLoginController();
+            return ulc.createUser(newUser);
         }
-        User newUser = new User(name,password,age);
-        UserLoginController ulc = new UserLoginController();
-        ulc.createUser(newUser);
-        return true;
     }
 }
