@@ -18,7 +18,6 @@ public class UserDAO {
                     + "VALUES (?,?,?,?)";
         var db = DBConnection.getConnection();
         try{
-            System.out.println("entra no try");
             var pstmt = db.prepareStatement(query);
             pstmt.setString(1,name);
             pstmt.setString(2, password);
@@ -27,7 +26,7 @@ public class UserDAO {
             pstmt.executeUpdate();
             return true;
         } catch(SQLException e){
-            System.out.println("A error happen when try set values for the new user.");
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
             return false;
         }
     }

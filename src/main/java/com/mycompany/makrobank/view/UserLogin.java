@@ -16,7 +16,7 @@ public class UserLogin {
         System.out.println("Type some of the options bellow to continue:");
         String firstAction = "";
         while(true){
-            System.out.println("[1] - To create a account\n [2] - Login\n [3] - To exit");
+            System.out.println(" [1] - To create a account\n [2] - Login\n [3] - To exit");
             firstAction = scan.nextLine();
             if(!(firstAction.equals("1")) || !(firstAction.equals("2") ||
                     !(firstAction.equals("3")))){
@@ -33,7 +33,6 @@ public class UserLogin {
         }
     }
     public boolean createAccount(){ // returns true if the account can be created
-        int age = 0;
         String name = "";
         String password = "";
         while(true){
@@ -49,11 +48,12 @@ public class UserLogin {
             System.out.print("Type your age (like: 20) minimum is 18 and max 99 years old: ");
             String strAge = scan.nextLine();
             
-            if(!User.canBeParsed(strAge)){
+            int age = User.canBeParsed(strAge);
+            if(age == -1){
                 System.out.println("Please, write a valid age value, like '30' (write just the number).");
                 continue;
             }
-            if(!User.haveAgeEnough(Integer.valueOf(strAge))){
+            if(!User.haveAgeEnough(age)){
                 System.out.println("You dont have age enough to create a account.");
                 return false;
             }

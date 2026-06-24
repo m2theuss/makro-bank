@@ -48,12 +48,11 @@ public class User {
     public Balance getInstanceOfBalance(){
         return balance;
     }
-    public static boolean canBeParsed(String valueToParse){ //try parse
+    public static int canBeParsed(String valueToParse){ //try parse to int (return the value if do, otherwise return -1)
         try{
-            Integer.valueOf(valueToParse);
-            return true;
+            return  Integer.parseInt(valueToParse);
         }catch (NumberFormatException e){
-            return false;
+            return -1;
         }
     }
     public static boolean haveAgeEnough(int age){

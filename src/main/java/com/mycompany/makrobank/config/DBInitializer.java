@@ -5,7 +5,8 @@ public class DBInitializer {
         var conn = DBConnection.getConnection();
         System.out.print(conn);
         var query = "CREATE TABLE IF NOT EXISTS User("
-                + "name TEXT PRIMARY KEY,"
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "name TEXT,"
                 + "password TEXT,"
                 + "age INTEGER,"
                 + "balance DOUBLE"

@@ -7,6 +7,5 @@ public class UserLoginController {
     }
     public boolean createUser(User user){ //true if the user has been created sucesufully
         return UserDAO.create(user);
-        
     }
 }
