@@ -14,12 +14,14 @@ public class User {
     private int age;
     private Balance balance;
     private String makroID;
+    private String salt;
 
     public User(String name, String password, int age, Balance balance) {
         this.name = name;
         this.password = password;
         this.age = age;
         this.balance = balance;
+        this.salt = "";
     }
 
     public String getName() {
@@ -45,6 +47,13 @@ public class User {
     public void setAge(int age) {
         this.age = age;
     }
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
     public Balance getInstanceOfBalance(){
         return balance;
     }
@@ -59,7 +68,6 @@ public class User {
         if(age > 18 && age < 99){
             return true;
         }
-        System.out.println("You dont have age enogh to create a account.");
         return false;
     }
 }

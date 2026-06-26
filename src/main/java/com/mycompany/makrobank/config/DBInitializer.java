@@ -1,13 +1,13 @@
 package com.mycompany.makrobank.config;
 import java.sql.SQLException;
 public class DBInitializer {
-    public static void veriryDB(){
-        var conn = DBConnection.getConnection();
-        System.out.print(conn);
-        var query = "CREATE TABLE IF NOT EXISTS User("
+    public static void verifyDB(){
+        var conn = new DBConnection().getConnection();
+        var query = "CREATE TABLE IF NOT EXISTS user("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "name TEXT,"
                 + "password TEXT,"
+                + "salt TEXT,"
                 + "age INTEGER,"
                 + "balance DOUBLE"
                 + ");";

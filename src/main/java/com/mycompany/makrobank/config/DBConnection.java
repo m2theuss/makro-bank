@@ -13,7 +13,7 @@ import java.sql.Connection;
  * @author matheus
  */
 public class DBConnection {
-    public static Connection getConnection() {
+    public Connection getConnection() {
         var url = "jdbc:sqlite:makrobank.db";
         try{
             var conn = DriverManager.getConnection(url);

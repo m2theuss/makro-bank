@@ -7,22 +7,23 @@ public class UserDAO {
     public UserDAO(){
         
     }
-    public static boolean create(User user){
+    public boolean create(User user){
         String name = user.getName();
         String password = user.getPassword();
+         
         int age = user.getAge();
         double bal = user.getInstanceOfBalance().getBalance();
 
-        var query = "INSERT INTO User "
-                    + "(name, password, age, balance)"
-                    + "VALUES (?,?,?,?)";
-        var db = DBConnection.getConnection();
-        try{
-            var pstmt = db.prepareStatement(query);
-            pstmt.setString(1,name);
-            pstmt.setString(2, password);
-            pstmt.setInt(3, age);
-            pstmt.setDouble(4, bal);
+        var query = "INSERT INTO user "
+                    + "(name, password, age, balance, salt)"
+                    + "VALUES (?,?,?,?,?)";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setInt(3, user.getAge());
+            pstmt.setDouble(4, user.getInstanceOfBalance().getBalance());
+            pstmt.setString(5, user.getSalt());
             pstmt.executeUpdate();
             return true;
         } catch(SQLException e){
