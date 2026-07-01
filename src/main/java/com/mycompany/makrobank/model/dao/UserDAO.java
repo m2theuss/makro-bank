@@ -23,8 +23,8 @@ public class UserDAO {
             return false;
         }
     }
-    public String getSalt(String name){
-        var query = "SELECT name FROM user "
+    public String getUserSalt(String name){
+        var query = "SELECT * FROM user "
                     +"WHERE name LIKE ?";
         var db = new DBConnection().getConnection();
         try(var pstmt = db.prepareStatement(query)){

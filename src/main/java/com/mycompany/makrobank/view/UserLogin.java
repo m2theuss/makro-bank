@@ -71,10 +71,10 @@ public class UserLogin {
         System.out.print("Type your name: ");
         String name = scan.nextLine();
         System.out.print("Type your password: ");
-        String password = scan.nextLine();
+        String userPassword = scan.nextLine();
         UserController ul = new UserController();
 
-        ul.login(name);
+        ul.login(name,userPassword);
         return true;
     }
 }

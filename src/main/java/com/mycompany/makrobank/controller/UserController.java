@@ -15,8 +15,8 @@ public class UserController{
         );
         return new UserDAO().create(user);
     }
-    public boolean login(String name){
-        String value = new UserDAO().getSalt(name);
+    public boolean login(String name, String userPassword){
+        String value = new UserDAO().getUserSalt(name);
         System.out.println(value);
         return true;
         
