@@ -5,3 +5,4 @@ target/
 nbproject/private/
 nb-configuration.xml
 build/
+makrobank.db

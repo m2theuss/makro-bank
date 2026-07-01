@@ -1,7 +1,7 @@
 package com.mycompany.makrobank.view;
 import java.util.Scanner;
 
-import com.mycompany.makrobank.controller.UserLoginController;
+import com.mycompany.makrobank.controller.UserController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
 public class UserLogin {
@@ -18,21 +18,25 @@ public class UserLogin {
         while(true){
             System.out.println("[1] - To create a account\n[2] - Login\n[3] - To exit");
             firstAction = scan.nextLine();
-            if(!(firstAction.equals("1")) || !(firstAction.equals("2") ||
-                    !(firstAction.equals("3")))){
-                System.out.println("Please, write some valid option.");
+            if(!(firstAction.equals("1") || (firstAction.equals("2") ||
+                    !(firstAction.equals("3"))))){
+                System.out.println("Please, write some valid option!");
                 continue;
             }
             if(firstAction.equals("1")){
-                if(createAccount()){
+                if(create()){
                     System.out.println("Your account has been created successfully!\n");
-                }else{
+                }else {
                     return;
+                }
+            }else if(firstAction.equals("2")){
+                if(login()){
+                    System.out.println("logged");
                 }
             }
         }
     }
-    public boolean createAccount(){ // returns true if the account can be created
+    public boolean create(){ // returns true if the account can be created
         String name = "";
         String password = "";
         while(true){
@@ -59,8 +63,18 @@ public class UserLogin {
                 return false;
             }
             User newUser = new User(name,password,age, new Balance(0));
-            UserLoginController ulc = new UserLoginController();
-            return ulc.createUser(newUser);
+            UserController ul = new UserController();
+            return ul.create(newUser);
         }
+    }
+    public boolean login(){
+        System.out.print("Type your name: ");
+        String name = scan.nextLine();
+        System.out.print("Type your password: ");
+        String password = scan.nextLine();
+        UserController ul = new UserController();
+
+        ul.login(name);
+        return true;
     }
 }

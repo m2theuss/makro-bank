@@ -4,16 +4,8 @@ import java.sql.SQLException;
 import com.mycompany.makrobank.config.*;
 import com.mycompany.makrobank.model.domain.*;
 public class UserDAO {
-    public UserDAO(){
-        
-    }
+    
     public boolean create(User user){
-        String name = user.getName();
-        String password = user.getPassword();
-         
-        int age = user.getAge();
-        double bal = user.getInstanceOfBalance().getBalance();
-
         var query = "INSERT INTO user "
                     + "(name, password, age, balance, salt)"
                     + "VALUES (?,?,?,?,?)";
@@ -29,6 +21,18 @@ public class UserDAO {
         } catch(SQLException e){
             System.out.println("A error happen when try set values for the new user." + e.getMessage());
             return false;
+        }
+    }
+    public String getSalt(String name){
+        var query = "SELECT name FROM user "
+                    +"WHERE name LIKE ?";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+            pstmt.setString(1,name);
+            return pstmt.executeQuery().getString("salt");
+        } catch(SQLException e){
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            return null;
         }
     }
 }
