@@ -11,12 +11,15 @@ public class UserLogin {
     }
 
     public void startLogin(){
+        clearConsole();
         System.out.println("Welcome to the Makro bank, you're allways welcome.");
         System.out.println("Create a account with us, or log into your accoutn.");
         System.out.println("Type some of the options bellow to continue:");
         String firstAction = "";
         while(true){
             System.out.println("[1] - To create a account\n[2] - Login\n[3] - To exit");
+            System.out.print("> ");
+
             firstAction = scan.nextLine();
             if(!(firstAction.equals("1") || (firstAction.equals("2") ||
                     !(firstAction.equals("3"))))){
@@ -25,13 +28,20 @@ public class UserLogin {
             }
             if(firstAction.equals("1")){
                 if(create()){
+                    clearConsole();
                     System.out.println("Your account has been created successfully!\n");
-                }else {
-                    return;
+                }else{
+                    clearConsole();
+                    System.out.println("This name already exists, try again with other name.");
+
                 }
             }else if(firstAction.equals("2")){
                 if(login()){
+                    clearConsole();
                     System.out.println("logged");
+                }else{
+                    clearConsole();
+                    System.out.println("Your password or username is incorrect, try again.");
                 }
             }
         }
@@ -73,8 +83,12 @@ public class UserLogin {
         System.out.print("Type your password: ");
         String userPassword = scan.nextLine();
         UserController ul = new UserController();
-
-        ul.login(name,userPassword);
-        return true;
+        return ul.login(name,userPassword);
+    }
+    public static void clearConsole() { 
+        final String ANSI_CLS = "\u001b[2J"; 
+        final String ANSI_HOME = "\u001b[H"; 
+        System.out.print(ANSI_CLS + ANSI_HOME); 
+        System.out.flush(); 
     }
 }

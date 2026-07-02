@@ -23,14 +23,38 @@ public class UserDAO {
             return false;
         }
     }
-    public String getUserSalt(String name){
-        var query = "SELECT * FROM user "
+    public String findSaltByName(String userName){
+        var query = "SELECT salt FROM user "
                     +"WHERE name LIKE ?";
         var db = new DBConnection().getConnection();
         try(var pstmt = db.prepareStatement(query)){
-            pstmt.setString(1,name);
+            pstmt.setString(1,userName);
             return pstmt.executeQuery().getString("salt");
         } catch(SQLException e){
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            return null;
+        }
+    }
+    public String findPasswordByName(String userName){
+        var query = "SELECT password FROM user "
+                + "WHERE name like ?";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+        pstmt.setString(1, userName);
+            return pstmt.executeQuery().getString("password");
+        }catch(SQLException e){
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            return null;
+        }
+    }
+    public String findUserByName(String userName){
+        var query = "SELECT name FROM user "
+                + "WHERE name like ?";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+        pstmt.setString(1, userName);
+            return pstmt.executeQuery().getString("name");
+        }catch(SQLException e){
             System.out.println("A error happen when try set values for the new user." + e.getMessage());
             return null;
         }
