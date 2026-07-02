@@ -1,8 +1,15 @@
-# Arquivos de compilação do Maven
+# compilação e dependências do Maven
 target/
+.mvn/
 
-# Arquivos temporários e de configuração do NetBeans
+# arquivo de Banco de Dados local
+makrobank.db
+
+# configurações locais do netbeans e outras IDEs
 nbproject/private/
 nb-configuration.xml
+nbactions.xml
 build/
-makrobank.db
+.idea/
+.vscode/
+*.iml
