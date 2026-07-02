@@ -57,14 +57,7 @@ public class User {
     public Balance getInstanceOfBalance(){
         return balance;
     }
-    public static int canBeParsed(String valueToParse){ //try parse to int (return the value if do, otherwise return -1)
-        try{
-            return  Integer.parseInt(valueToParse);
-        }catch (NumberFormatException e){
-            return -1;
-        }
-    }
-    public static boolean haveAgeEnough(int age){
+    public static boolean isAdult(int age){
         if(age > 18 && age < 99){
             return true;
         }

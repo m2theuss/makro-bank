@@ -10,82 +10,131 @@ public class UserLogin {
         this.scan = scan;
     }
 
-    public void startLogin(){
+    public void start(){
         clearConsole();
-        System.out.println("Welcome to the Makro bank, you're allways welcome.");
-        System.out.println("Create a account with us, or log into your accoutn.");
+        System.out.println("Welcome to the Makro bank, you're allways welcome!");
         System.out.println("Type some of the options bellow to continue:");
-        String firstAction = "";
+        Integer firstAction = null;
         while(true){
             System.out.println("[1] - To create a account\n[2] - Login\n[3] - To exit");
             System.out.print("> ");
-
-            firstAction = scan.nextLine();
-            if(!(firstAction.equals("1") || (firstAction.equals("2") ||
-                    !(firstAction.equals("3"))))){
-                System.out.println("Please, write some valid option!");
+            try{
+                firstAction = scan.nextInt();
+                if(!(firstAction >= 1 && firstAction <= 3)){
+                    throw new Exception();
+                }
+            }catch(Exception e){
+                clearConsole();
+                System.out.println("Please, write some valid option.");
                 continue;
             }
-            if(firstAction.equals("1")){
+
+            if(firstAction == 1){
                 if(create()){
                     clearConsole();
                     System.out.println("Your account has been created successfully!\n");
                 }else{
                     clearConsole();
                     System.out.println("This name already exists, try again with other name.");
-
                 }
-            }else if(firstAction.equals("2")){
+            }else if(firstAction == 2){
                 if(login()){
                     clearConsole();
-                    System.out.println("logged");
+                    System.out.println("Your ir now logged");
                 }else{
                     clearConsole();
                     System.out.println("Your password or username is incorrect, try again.");
                 }
+            }else if(firstAction == 3){
+                clearConsole();
+                System.out.println("Bye!");
+                return;
             }
         }
     }
-    public boolean create(){ // returns true if the account can be created
+    private boolean create(){ 
+        String name = readUserName();
+        String password = readUserPassword();
+        int age = readUserAge();
+        User newUser = new User(name,password,age, new Balance(0));
+        UserController ul = new UserController();
+        return ul.create(newUser);
+    }
+    private boolean login(){
+        System.out.print("Type your name: ");
+        scan.nextLine();
+        String name = scan.nextLine();
+        System.out.print("Type your password: ");
+        String userPassword = scan.nextLine();
+        
+        UserController ul = new UserController();
+        return ul.login(name,userPassword);
+    }
+    private String readUserName(){
         String name = "";
-        String password = "";
         while(true){
             System.out.print("Type a name: ");
             name = scan.nextLine();
             if(name.isEmpty()){
-                System.out.println("Write a valid name.");
-                continue;
+                clearConsole();
+                System.out.println("Empty names are not accepted.");
+            }else if(name.length() > 30){
+                clearConsole();
+                System.out.println("Write a name with at most 30 letters.");
+            }else if(name.contains(" ")){
+                clearConsole();
+                System.out.println("The name dont must contain spaces.");
+            }else{
+                break;
             }
-            System.out.print("Type a password: ");
-            password = scan.nextLine();
-
+        }
+        return name;
+    }
+    private String readUserPassword(){
+        String password = "";
+        while(true){
+            System.out.print("Type a password (at least with the size of 8): ");
+            password = scan.nextLine(); 
+            if(password.isEmpty()){
+                clearConsole();
+                System.out.println("Empty passwords are not accepted.");
+            }else if(password.length() < 8 || password.length() > 64){
+                clearConsole();
+                System.out.println("Write a password with at least 8 characters and at most 64 characters.");
+            }else if(password.contains(" ")){
+                clearConsole();
+                System.out.println("The password dont must contain spaces.");
+            }else{
+                break;
+            }
+        }
+        return password;
+    }
+    private int readUserAge(){
+        Integer age = null;
+        while(true){
             System.out.print("Type your age (like: 20) minimum is 18 and max 99 years old: ");
-            String strAge = scan.nextLine();
-            System.out.println("");
-            
-            int age = User.canBeParsed(strAge);
-            if(age == -1){
-                System.out.println("Please, write a valid age value, like '30' (write just the number).");
+            try{
+                age = scan.nextInt();
+            }catch(Exception e){
+                System.out.println("Write a valid age (just number).");
+                clearConsole();
+                continue;
+            }            
+            if(age < 18){
+                clearConsole();
+                System.out.println("Minimum age is 18 years old.");
                 continue;
             }
-            if(!User.haveAgeEnough(age)){
-                System.out.println("You dont have age enough to create a account.");
-                return false;
+            if(age > 99){
+                clearConsole();
+                System.out.println("Maximum age is 99 years old.");
+                continue;
             }
-            User newUser = new User(name,password,age, new Balance(0));
-            UserController ul = new UserController();
-            return ul.create(newUser);
+            return age;
         }
     }
-    public boolean login(){
-        System.out.print("Type your name: ");
-        String name = scan.nextLine();
-        System.out.print("Type your password: ");
-        String userPassword = scan.nextLine();
-        UserController ul = new UserController();
-        return ul.login(name,userPassword);
-    }
-    public static void clearConsole() { 
+    private void clearConsole() { 
         final String ANSI_CLS = "\u001b[2J"; 
         final String ANSI_HOME = "\u001b[H"; 
         System.out.print(ANSI_CLS + ANSI_HOME); 

@@ -18,6 +18,6 @@ public class Main {
         DBInitializer.verifyDB();
         Scanner scan = new Scanner(System.in);
         UserLogin userLogin = new UserLogin(scan);
-        userLogin.startLogin();
+        userLogin.start();
     }
 }
