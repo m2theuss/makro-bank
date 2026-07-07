@@ -59,4 +59,7 @@ public class UserDAO {
             return null;
         }
     }
+    public String updateToken(String userName, String token){
+        return "";
+    }
 }

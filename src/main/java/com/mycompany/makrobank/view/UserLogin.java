@@ -42,8 +42,7 @@ public class UserLogin {
                         System.out.println("Your account was created!");
                     }else{
                         clearConsole();
-                        System.out.println("This name already exists, try again "
-                                + "with other name.");
+                        System.out.println("A error happen, try again or later.");
                     }
                 }
                 case 2 -> {
@@ -66,6 +65,7 @@ public class UserLogin {
         }
     }
     private boolean create(){ 
+        System.out.println("Lets create an account!");
         String name = readUserName();
         String password = readUserPassword();
         int age = readUserAge();
@@ -83,7 +83,7 @@ public class UserLogin {
         String name = "";
         clearConsole();
         while(true){
-            System.out.print("Type a name: ");
+            System.out.print("Type name: ");
             name = scan.nextLine();
             if(name.isEmpty()){
                 System.out.println("Empty names are not accepted.");
@@ -91,6 +91,9 @@ public class UserLogin {
                 System.out.println("Write a name with at most 30 letters.");
             }else if(name.contains(" ")){
                 System.out.println("The name dont must contain spaces.");
+            }else if(new UserController().nameUserExist(name)){
+                System.out.println("This name already exists, try again "
+                                + "with other name.");
             }else{
                 break;
             }
@@ -100,7 +103,7 @@ public class UserLogin {
     private String readUserPassword(){
         String password = "";
         String passwordConfirmation = "";
-        System.out.print("Do you want show your password while typing it? (Type: 'Y' to accept): ");
+        System.out.print("Hide password while typing (Type: 'Y' to accept)? ");
         String showPassWhileTyping = scan.nextLine().toUpperCase();
         System.out.println("Type a password (at least with the size of 8).");
         while(true){
@@ -110,6 +113,7 @@ public class UserLogin {
                     showPassWhileTyping = "N";
                     continue; 
                 }
+                return password;
             }else{
                 System.out.print("Type: ");
                 password = scan.nextLine();
@@ -126,8 +130,8 @@ public class UserLogin {
     }
     public String readUserPasswordSafety(){
         Console console = System.console();
-        String passwordSafe = "";
-        String passwordSafeConfirm = "";
+        String firtPasswordSafe = "";
+        String secondPasswordSafe = "";
         if(console == null){
             System.out.println("No console avaliable. "
                     + "Please, dont run this program inside of some IDE terminal. "
@@ -135,18 +139,15 @@ public class UserLogin {
             return null;
         }
         while(true){
-            System.out.print("Type: ");
-            passwordSafe = String.valueOf(console.readPassword());
-            if(passwordIsValid(passwordSafe)){
+            System.out.print("Type (the password wont show): ");
+            firtPasswordSafe = String.valueOf(console.readPassword());
+            if(passwordIsValid(firtPasswordSafe)){
                 System.out.print("Type again: ");
-                passwordSafeConfirm = String.valueOf(console.readPassword());
-                if(passwordIsValid(passwordSafeConfirm)){
-                    if(passwordSafe.equals(passwordSafeConfirm)){
-                        return passwordSafe;
-                    }
-                    System.out.println("The passwords dont match. Try again!");
+                secondPasswordSafe = String.valueOf(console.readPassword());
+                if(firtPasswordSafe.equals(secondPasswordSafe)){
+                    return firtPasswordSafe;
                 }
-
+                System.out.println("The passwords dont match. Try again!");
             }
         }
     }
@@ -169,21 +170,25 @@ public class UserLogin {
 
     private int readUserAge(){
         Integer age = null;
+        String tmpAge = null;
         while(true){
             System.out.print("Type your age (like: 20) minimum is 18 and max 99"
                     + " years old: ");
             try{
-                age = scan.nextInt();
-            }catch(Exception e){
-                System.out.println("Write a valid age (just number).");
-                continue;
-            }            
-            if(age < 18){
-                System.out.println("Minimum age is 18 years old.");
+                tmpAge = scan.nextLine();
+                if(!tmpAge.isEmpty()){
+                    age = Integer.valueOf(tmpAge);
+                }else{
+                    System.out.println("Empty values are not accepted.");
+                    continue;
+                }
+            }catch(NumberFormatException  e){
+                System.out.println("Write valid age (just intger number).");
                 continue;
             }
-            if(age > 99){
-                System.out.println("Maximum age is 99 years old.");
+
+            if(age < 18 || age > 99){
+                System.out.println("Minimum age is 18 years old and max is 99 years old.");
                 continue;
             }
             return age;

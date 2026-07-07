@@ -19,7 +19,7 @@ public class UserController{
                                 PasswordUtils.fromStringToByte(user.getSalt())
                 ))
         );
-        if(userDAO.findUserByName(user.getName()) == null){
+        if(!nameUserExist(user.getName())){
             return userDAO.create(user);
         }else{
             return false;
@@ -35,7 +35,13 @@ public class UserController{
                         userPassword, PasswordUtils.fromStringToByte(saltValue)
                 )
         );
-        return toBeCompared.equals(userDAO.findPasswordByName(userName));
-        
+        return toBeCompared.equals(userDAO.findPasswordByName(userName));   
+    }
+    public boolean nameUserExist(String name){
+        if(userDAO.findUserByName(name) == null){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
