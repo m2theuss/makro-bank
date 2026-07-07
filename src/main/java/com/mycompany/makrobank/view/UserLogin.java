@@ -86,13 +86,10 @@ public class UserLogin {
             System.out.print("Type a name: ");
             name = scan.nextLine();
             if(name.isEmpty()){
-                clearConsole();
                 System.out.println("Empty names are not accepted.");
             }else if(name.length() > 30){
-                clearConsole();
                 System.out.println("Write a name with at most 30 letters.");
             }else if(name.contains(" ")){
-                clearConsole();
                 System.out.println("The name dont must contain spaces.");
             }else{
                 break;
@@ -102,54 +99,74 @@ public class UserLogin {
     }
     private String readUserPassword(){
         String password = "";
+        String passwordConfirmation = "";
         System.out.print("Do you want show your password while typing it? (Type: 'Y' to accept): ");
         String showPassWhileTyping = scan.nextLine().toUpperCase();
+        System.out.println("Type a password (at least with the size of 8).");
         while(true){
-            System.out.print("Type a password (at least with the size of 8): ");
             if(showPassWhileTyping.equals("Y")){
                 password = readUserPasswordSafety();
+                if(password == null){
+                    showPassWhileTyping = "N";
+                    continue; 
+                }
             }else{
+                System.out.print("Type: ");
                 password = scan.nextLine();
-            }
-            if(password.isEmpty()){
-                clearConsole();
-                System.out.println("Empty passwords are not accepted.");
-            }else if(password.length() < 8 || password.length() > 64){
-                clearConsole();
-                System.out.println("Write a password with at least 8 characters "
-                        + "and at most 64 characters.");
-            }else if(password.contains(" ")){
-                clearConsole();
-                System.out.println("The password dont must contain spaces.");
-            }else{
-                break;
+                if(passwordIsValid(password)){
+                    System.out.print("Type again: ");
+                    passwordConfirmation = scan.nextLine();
+                    if(password.equals(passwordConfirmation)){
+                        return password;
+                    }
+                    System.out.println("The passwords dont match. Try again!");
+                }
             }
         }
-        return password;
     }
     public String readUserPasswordSafety(){
-        char[] secretPassword = null;
-        char[] secretPasswordConfirmation = null;
+        Console console = System.console();
+        String passwordSafe = "";
+        String passwordSafeConfirm = "";
+        if(console == null){
+            System.out.println("No console avaliable. "
+                    + "Please, dont run this program inside of some IDE terminal. "
+                    + "(The password will be showed while its typing.\n)");
+            return null;
+        }
         while(true){
-            Console console = System.console();
-            if(console == null){
-                clearConsole();
-                System.out.println("No console avaliable. "
-                        + "Please, dont run this program inside of some IDE terminal. "
-                        + "(The password will be showed.\n)");
-                return null;
+            System.out.print("Type: ");
+            passwordSafe = String.valueOf(console.readPassword());
+            if(passwordIsValid(passwordSafe)){
+                System.out.print("Type again: ");
+                passwordSafeConfirm = String.valueOf(console.readPassword());
+                if(passwordIsValid(passwordSafeConfirm)){
+                    if(passwordSafe.equals(passwordSafeConfirm)){
+                        return passwordSafe;
+                    }
+                    System.out.println("The passwords dont match. Try again!");
+                }
+
             }
-            secretPassword = console.readPassword();
-            System.out.print("Type again to confirm your password: ");
-            secretPasswordConfirmation = console.readPassword();
-            if(!(Arrays.equals(secretPassword, secretPasswordConfirmation))){
-                clearConsole();
-                System.out.println("The password dont match. Try again!");
-                continue;
-            }
-            return String.valueOf(secretPassword);
         }
     }
+
+    private boolean passwordIsValid(String password){
+        if(password.isEmpty()){
+            System.out.println("Empty passwords are not accepted.");
+            return false;
+        }else if(password.length() < 8 || password.length() > 64){
+            System.out.println("Write a password with at least 8 characters "
+                    + "and at most 64 characters.");
+            return false;
+        }else if(password.contains(" ")){
+            System.out.println("The password dont must contain spaces.");
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     private int readUserAge(){
         Integer age = null;
         while(true){
@@ -159,22 +176,20 @@ public class UserLogin {
                 age = scan.nextInt();
             }catch(Exception e){
                 System.out.println("Write a valid age (just number).");
-                clearConsole();
                 continue;
             }            
             if(age < 18){
-                clearConsole();
                 System.out.println("Minimum age is 18 years old.");
                 continue;
             }
             if(age > 99){
-                clearConsole();
                 System.out.println("Maximum age is 99 years old.");
                 continue;
             }
             return age;
         }
     }
+
     private void clearConsole() { 
         final String ANSI_CLS = "\u001b[2J"; 
         final String ANSI_HOME = "\u001b[H"; 
