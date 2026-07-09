@@ -13,7 +13,7 @@ public class User {
     private String password;
     private int age;
     private Balance balance;
-    private String makroID;
+    private String payload;
     private String salt;
 
     public User(String name, String password, int age, Balance balance) {
@@ -21,6 +21,7 @@ public class User {
         this.password = password;
         this.age = age;
         this.balance = balance;
+        this.payload = "";
         this.salt = "";
     }
 
@@ -53,6 +54,12 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+    public String getPayload(){
+        return payload;
+    }
+    public void setPayload(String payload){
+        this.payload = payload;
     }
     public Balance getInstanceOfBalance(){
         return balance;

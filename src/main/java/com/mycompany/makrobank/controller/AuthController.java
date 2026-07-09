@@ -1,11 +1,12 @@
 package com.mycompany.makrobank.controller;
 import com.mycompany.makrobank.model.dao.UserDAO;
 import com.mycompany.makrobank.model.domain.*;
+import com.mycompany.makrobank.security.TokenService;
 import com.mycompany.makrobank.util.*;
 
-public class UserController{
+public class AuthController{
     private final UserDAO userDAO; 
-    public UserController(){
+    public AuthController(){
         this.userDAO = new UserDAO();
     }
     public boolean create(User user) { //true if the user has been created sucesufully
@@ -25,17 +26,27 @@ public class UserController{
             return false;
         }
     }
-    public boolean login(String userName, String userPassword){
+    public User login(String userName, String userPassword){
         String saltValue = userDAO.findSaltByName(userName);
         if(saltValue == null){
-            return false;
+            return null;
         }
-        String toBeCompared = PasswordUtils.fromByteToString(
+        String userPasswordHash = PasswordUtils.fromByteToString(
                 PasswordUtils.hashGenerator(
                         userPassword, PasswordUtils.fromStringToByte(saltValue)
                 )
         );
-        return toBeCompared.equals(userDAO.findPasswordByName(userName));   
+        if(userPasswordHash.equals(userDAO.findPasswordByName(userName))){
+            User tmp = new User(
+                userName, 
+                userPasswordHash, 
+                userDAO.findAgeByName(userName),
+                new Balance(userDAO.findBalanceByName(userName))
+            );
+            tmp.setPayload(new TokenService().generateToken(userName));
+            return tmp;
+        } 
+        return null;
     }
     public boolean nameUserExist(String name){
         if(userDAO.findUserByName(name) == null){

@@ -1,14 +1,13 @@
 package com.mycompany.makrobank.view;
 import java.util.Scanner;
 
-import com.mycompany.makrobank.controller.UserController;
+import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
 import java.io.Console;
-import java.util.Arrays;
-public class UserLogin {
+public class AuthView {
     private final Scanner scan; 
-    public UserLogin(Scanner scan){
+    public AuthView(Scanner scan){
         this.scan = scan;
     }
 
@@ -46,9 +45,11 @@ public class UserLogin {
                     }
                 }
                 case 2 -> {
-                    if(login()){
+                    User user = login();
+                    if(user != null){
                         clearConsole();
-                        System.out.println("Your ir now logged");
+                        System.out.println("Your is now logged, your token is: " + user.getPayload());
+                        
                     }else{
                         clearConsole();
                         System.out.println("Your password or username is incorrect, try again.");
@@ -70,13 +71,15 @@ public class UserLogin {
         String password = readUserPassword();
         int age = readUserAge();
         User newUser = new User(name,password,age, new Balance(0));
-        UserController controller = new UserController();
+        AuthController controller = new AuthController();
         return controller.create(newUser);
     }
-    private boolean login(){
-        String name = readUserName();
-        String userPassword = readUserPassword();
-        UserController controller = new UserController();
+    private User login(){
+        System.out.print("Type the user: ");
+        String name = scan.nextLine();
+        System.out.print("Type the password: ");
+        String userPassword = scan.nextLine();
+        AuthController controller = new AuthController();
         return controller.login(name,userPassword);
     }
     private String readUserName(){
@@ -89,9 +92,9 @@ public class UserLogin {
                 System.out.println("Empty names are not accepted.");
             }else if(name.length() > 30){
                 System.out.println("Write a name with at most 30 letters.");
-            }else if(name.contains(" ")){
-                System.out.println("The name dont must contain spaces.");
-            }else if(new UserController().nameUserExist(name)){
+            }else if(name.contains(" ") || name.contains(".")){
+                System.out.println("The name dont must contain spaces or points.");
+            }else if(new AuthController().nameUserExist(name)){
                 System.out.println("This name already exists, try again "
                                 + "with other name.");
             }else{

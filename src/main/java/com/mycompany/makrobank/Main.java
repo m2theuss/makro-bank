@@ -17,7 +17,7 @@ public class Main {
         System.out.println("Hello");
         DBInitializer.verifyDB();
         Scanner scan = new Scanner(System.in);
-        UserLogin userLogin = new UserLogin(scan);
+        AuthView userLogin = new AuthView(scan);
         userLogin.start();
     }
 }

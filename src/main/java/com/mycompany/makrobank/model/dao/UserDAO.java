@@ -47,6 +47,30 @@ public class UserDAO {
             return null;
         }
     }
+    public Double findBalanceByName(String userName){
+        var query = "SELECT balance FROM user "
+                + "WHERE name like ?";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+        pstmt.setString(1, userName);
+            return pstmt.executeQuery().getDouble("balance");
+        }catch(SQLException e){
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            return -1.0;
+        }
+    }
+    public Integer findAgeByName(String userName){
+        var query = "SELECT age FROM user "
+                + "WHERE name like ?";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+        pstmt.setString(1, userName);
+            return pstmt.executeQuery().getInt("age");
+        }catch(SQLException e){
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            return null;
+        }
+    }
     public String findUserByName(String userName){
         var query = "SELECT name FROM user "
                 + "WHERE name like ?";
