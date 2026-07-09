@@ -67,9 +67,9 @@ public class AuthView {
     }
     private boolean create(){ 
         System.out.println("Lets create an account!");
-        String name = readUserName();
-        String password = readUserPassword();
-        int age = readUserAge();
+        String name = readName();
+        String password = readPassword();
+        int age = readAge();
         User newUser = new User(name,password,age, new Balance(0));
         AuthController controller = new AuthController();
         return controller.create(newUser);
@@ -78,124 +78,130 @@ public class AuthView {
         System.out.print("Type the user: ");
         String name = scan.nextLine();
         System.out.print("Type the password: ");
-        String userPassword = scan.nextLine();
+        String password = null;
+        System.out.print("Hide password while typing (Type: 'Y' to accept)? ");
+        String showPassword = scan.nextLine().toUpperCase();
+        while(true){
+            if("Y".equals(showPassword)){
+                password = readHiddenInput();
+                if(password != null){
+                    break;
+                }
+                showPassword = null;
+            }else{
+                password = scan.nextLine();
+            }
+        }
         AuthController controller = new AuthController();
-        return controller.login(name,userPassword);
+        return controller.login(name,password);
     }
-    private String readUserName(){
-        String name = "";
-        clearConsole();
+    private String readName(){
+        String nameVerificationResult = null;
+        String name = null;
         while(true){
             System.out.print("Type name: ");
             name = scan.nextLine();
-            if(name.isEmpty()){
-                System.out.println("Empty names are not accepted.");
-            }else if(name.length() > 30){
-                System.out.println("Write a name with at most 30 letters.");
-            }else if(name.contains(" ") || name.contains(".")){
-                System.out.println("The name dont must contain spaces or points.");
-            }else if(new AuthController().nameUserExist(name)){
-                System.out.println("This name already exists, try again "
-                                + "with other name.");
-            }else{
-                break;
+            nameVerificationResult = nameValidation(name);
+            if(nameVerificationResult == null){
+                return name;
             }
+            System.out.println(nameVerificationResult);
+            continue;
         }
-        return name;
     }
-    private String readUserPassword(){
-        String password = "";
-        String passwordConfirmation = "";
-        System.out.print("Hide password while typing (Type: 'Y' to accept)? ");
-        String showPassWhileTyping = scan.nextLine().toUpperCase();
-        System.out.println("Type a password (at least with the size of 8).");
+    private String nameValidation(String name){
+        if(name.isEmpty()){
+            return "Empty names are not accepted.";
+        }else if(name.length() > 30){
+            return "Write a name with at most 30 letters.";
+        }else if(name.contains(" ") || name.contains(".")){
+            return "The name dont must contain spaces or points.";
+        }else if(new AuthController().nameUserExist(name)){
+            return "This name already exists, try again "
+                            + "with other name.";
+        }else{
+            return null;
+        }
+    }
+    private String readPassword(){
+        String password = null;
+        String passwordVerificationResult = null;
         while(true){
-            if(showPassWhileTyping.equals("Y")){
-                password = readUserPasswordSafety();
-                if(password == null){
-                    showPassWhileTyping = "N";
-                    continue; 
+            System.out.print("Type a password: ");
+            password = scan.nextLine();
+            passwordVerificationResult = passwordValidation(password);
+            if(passwordVerificationResult == null){
+                System.out.print("Type again to confirm your password: ");
+                if(password.equals(scan.nextLine())){
+                    return password;
                 }
-                return password;
+                System.out.println("The password dont match, try again!");
             }else{
-                System.out.print("Type: ");
-                password = scan.nextLine();
-                if(passwordIsValid(password)){
-                    System.out.print("Type again: ");
-                    passwordConfirmation = scan.nextLine();
-                    if(password.equals(passwordConfirmation)){
-                        return password;
-                    }
-                    System.out.println("The passwords dont match. Try again!");
-                }
+                System.out.println(passwordVerificationResult);
             }
         }
     }
-    public String readUserPasswordSafety(){
+    
+    public String readHiddenInput(){
         Console console = System.console();
-        String firtPasswordSafe = "";
-        String secondPasswordSafe = "";
         if(console == null){
-            System.out.println("No console avaliable. "
-                    + "Please, dont run this program inside of some IDE terminal. "
-                    + "(The password will be showed while its typing.\n)");
             return null;
         }
         while(true){
             System.out.print("Type (the password wont show): ");
-            firtPasswordSafe = String.valueOf(console.readPassword());
-            if(passwordIsValid(firtPasswordSafe)){
-                System.out.print("Type again: ");
-                secondPasswordSafe = String.valueOf(console.readPassword());
-                if(firtPasswordSafe.equals(secondPasswordSafe)){
-                    return firtPasswordSafe;
-                }
-                System.out.println("The passwords dont match. Try again!");
-            }
+            return String.valueOf(console.readPassword());
         }
     }
 
-    private boolean passwordIsValid(String password){
+    private String passwordValidation(String password){
         if(password.isEmpty()){
-            System.out.println("Empty passwords are not accepted.");
-            return false;
+            return "Empty passwords are not accepted.";
         }else if(password.length() < 8 || password.length() > 64){
-            System.out.println("Write a password with at least 8 characters "
-                    + "and at most 64 characters.");
-            return false;
+            return "Write a password with at least 8 characters "
+                    + "and at most 64 characters.";
         }else if(password.contains(" ")){
-            System.out.println("The password dont must contain spaces.");
-            return false;
+            return "The password dont must contain spaces.";
         }else{
-            return true;
+            return null;
         }
     }
 
-    private int readUserAge(){
-        Integer age = null;
-        String tmpAge = null;
+    private int readAge(){
+        Integer ageConverted = null;
+        String ageResultValidation = null;
         while(true){
-            System.out.print("Type your age (like: 20) minimum is 18 and max 99"
-                    + " years old: ");
-            try{
-                tmpAge = scan.nextLine();
-                if(!tmpAge.isEmpty()){
-                    age = Integer.valueOf(tmpAge);
-                }else{
-                    System.out.println("Empty values are not accepted.");
-                    continue;
-                }
-            }catch(NumberFormatException  e){
-                System.out.println("Write valid age (just intger number).");
+            System.out.print("Type your age (Just integers like '20'): ");
+            ageConverted = convertAge(scan.nextLine());
+            if(ageConverted == null){
+                System.out.println("Write a valid age!");
                 continue;
             }
-
-            if(age < 18 || age > 99){
-                System.out.println("Minimum age is 18 years old and max is 99 years old.");
-                continue;
+            ageResultValidation = validateAge(ageConverted);
+            if(ageResultValidation == null){
+                return ageConverted;
             }
-            return age;
+            System.out.println(ageResultValidation);
         }
+    }
+    public Integer convertAge(String ageInSring){
+        try{
+            Integer age = null;
+            if(!ageInSring.isEmpty() && !(ageInSring == null)){
+                age = Integer.valueOf(ageInSring);
+                return age;
+            }else{
+                return null;
+            }
+        }catch(NumberFormatException  e){
+            return null;
+        }
+    }
+    public String validateAge(int age){
+        if(age < 18 || age > 99){
+            return "Minimum age is 18 years old and max is 99 years old.";
+        }
+        return null;
+            
     }
 
     private void clearConsole() { 

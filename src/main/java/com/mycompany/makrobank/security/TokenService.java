@@ -14,7 +14,7 @@ public class TokenService {
 
     public String generateToken(String userName){
         String expiration = LocalDateTime.now().plusMinutes(1).toString();
-        return tokenHashGenerator(expiration, userName);
+        return tokenHashGenerator(expiration.replace(".",":"), userName);
     }
     public String tokenHashGenerator(String expiration, String userName){
         String baseHash = expiration+userName+secreteKey;
