@@ -6,8 +6,10 @@ import java.util.function.Supplier;
 import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.security.TokenService;
 public class AuthView {
     private final Scanner scan; 
+    private final String SHOW_PASSWORD_WHILE_TYPING = "Do you want hide your password while typing (Y or N)? ";
     public AuthView(Scanner scan){
         this.scan = scan;
     }
@@ -17,61 +19,69 @@ public class AuthView {
         System.out.println("Welcome to the Makro bank, you're allways welcome!");
         System.out.println("Type some of the options bellow to continue:");
         while(true){
+            String action = executeAction(readOptions());
+            if(action == null){
+                System.out.println("Bye");
+                return;
+            }
+            System.out.println(action);
+        }
+
+    }
+    public int readOptions(){
+        final String INVALID_OPTION = "Please, write some valid option.";
+        while(true){
             System.out.println("""
                 [1] - To create a account
                 [2] - Login
                 [3] - To exit""");
             System.out.print("> ");
-            Integer firstAction = null;
             try{
-                firstAction = scan.nextInt();
+                int option = scan.nextInt();
                 scan.nextLine();
-                if(!(firstAction >= 1 && firstAction <= 3)){
-                    System.out.println("Please, write some valid option.");
+                if(option >= 1 && option <= 3){
+                    return option;
                 }
+                System.out.println(INVALID_OPTION);
             }catch(Exception e){
-                clearConsole();
-                System.out.println("Please, write some valid option.");
+                System.out.println(INVALID_OPTION);
                 continue;
             }
-
-            switch (firstAction) {
+        }
+    }
+    public String executeAction(int option){
+        switch (option) {
                 case 1 -> {
                     if(create()){
-                        clearConsole();
-                        System.out.println("Your account was created!");
+                        return "Your account was created!";
                     }else{
-                        clearConsole();
-                        System.out.println("A error happen, try again or later.");
+                        return "A error happen, try again or later.";
                     }
                 }
                 case 2 -> {
                     User user = login();
-                    if(user != null){
-                        clearConsole();
-                        System.out.println("Your is now logged, your token is: " + user.getPayload());
+                    if(user == null){
+                        return "Your password or username is incorrect, try again.";
                         
-                    }else{
-                        clearConsole();
-                        System.out.println("Your password or username is incorrect, try again.");
                     }
+                    return "Your is now logged, your token is: " + user.getPayload() + new TokenService().tokenIsValid(user.getPayload());
+                    
                 }
                 case 3 -> {
-                    clearConsole();
-                    System.out.println("Bye!");
-                    return;
+                    return null;
                 }
                 default -> {
+                    return "A valid option is 1,2 or 3. Try again.";
                 }
             }
-        }
     }
+
     private boolean create(){ 
         System.out.println("Let's create an account!");
         String name = readName();
         String password = null;
         while(true){
-            System.out.print("Do you want hide your password while typing (Y or N)? ");
+            System.out.print(SHOW_PASSWORD_WHILE_TYPING);
             String decision = scan.nextLine().toUpperCase();
             if("Y".equals(decision)){
                 password = readHiddenPassword();
@@ -94,16 +104,17 @@ public class AuthView {
     private User login(){
         System.out.print("Type the user: ");
         String name = scan.nextLine();
-        System.out.print("Type the password: ");
-        String password = null;
-        System.out.print("Hide password while typing (Type: 'Y' to accept)? ");
+        System.out.print(SHOW_PASSWORD_WHILE_TYPING);
         String showPassword = scan.nextLine().toUpperCase();
+        String password = null;
         while(true){
             if("Y".equals(showPassword)){
-                password = readHiddenPassword();
+                System.out.print("Type (won't show): ");
+                password = readHiddenInput();
                 break;
             }else if("N".equals(showPassword)){
-                password = readPassword();
+                System.out.print("Type: ");
+                password = scan.nextLine();
                 break;
             }
         }
@@ -180,7 +191,9 @@ public class AuthView {
     }
 
     private String validatePassword(String password){
-        if(password.isEmpty()){
+        if(password == null){
+            return "Null value are not accepted";
+        }else if(password.isEmpty()){
             return "Empty passwords are not accepted.";
         }else if(password.length() < 8 || password.length() > 64){
             return "Write a password with at least 8 characters "
@@ -209,7 +222,7 @@ public class AuthView {
     }
     public Integer convertAge(String ageInSring){
         try{
-            if(!ageInSring.isEmpty() && !(ageInSring == null)){
+            if((ageInSring != null) && (!ageInSring.isEmpty())){
                 return Integer.valueOf(ageInSring);
             }else{
                 return null;
