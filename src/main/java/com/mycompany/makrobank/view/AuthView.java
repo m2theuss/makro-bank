@@ -1,10 +1,11 @@
 package com.mycompany.makrobank.view;
+import java.io.Console;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
-import java.io.Console;
 public class AuthView {
     private final Scanner scan; 
     public AuthView(Scanner scan){
@@ -15,19 +16,19 @@ public class AuthView {
         clearConsole();
         System.out.println("Welcome to the Makro bank, you're allways welcome!");
         System.out.println("Type some of the options bellow to continue:");
-        Integer firstAction = null;
         while(true){
             System.out.println("""
                 [1] - To create a account
                 [2] - Login
                 [3] - To exit""");
             System.out.print("> ");
+            Integer firstAction = null;
             try{
                 firstAction = scan.nextInt();
-                if(!(firstAction >= 1 && firstAction <= 3)){
-                    throw new Exception();
-                }
                 scan.nextLine();
+                if(!(firstAction >= 1 && firstAction <= 3)){
+                    System.out.println("Please, write some valid option.");
+                }
             }catch(Exception e){
                 clearConsole();
                 System.out.println("Please, write some valid option.");
@@ -66,9 +67,25 @@ public class AuthView {
         }
     }
     private boolean create(){ 
-        System.out.println("Lets create an account!");
+        System.out.println("Let's create an account!");
         String name = readName();
-        String password = readPassword();
+        String password = null;
+        while(true){
+            System.out.print("Do you want hide your password while typing (Y or N)? ");
+            String decision = scan.nextLine().toUpperCase();
+            if("Y".equals(decision)){
+                password = readHiddenPassword();
+                break;
+            }else if("N".equals(decision)){
+                password = readPassword();
+                break;
+            }else{
+                System.out.println("Invalid option, try again.");
+            }
+        }
+        if(password == null){
+            return false;
+        }
         int age = readAge();
         User newUser = new User(name,password,age, new Balance(0));
         AuthController controller = new AuthController();
@@ -83,13 +100,11 @@ public class AuthView {
         String showPassword = scan.nextLine().toUpperCase();
         while(true){
             if("Y".equals(showPassword)){
-                password = readHiddenInput();
-                if(password != null){
-                    break;
-                }
-                showPassword = null;
-            }else{
-                password = scan.nextLine();
+                password = readHiddenPassword();
+                break;
+            }else if("N".equals(showPassword)){
+                password = readPassword();
+                break;
             }
         }
         AuthController controller = new AuthController();
@@ -101,7 +116,7 @@ public class AuthView {
         while(true){
             System.out.print("Type name: ");
             name = scan.nextLine();
-            nameVerificationResult = nameValidation(name);
+            nameVerificationResult = validateName(name);
             if(nameVerificationResult == null){
                 return name;
             }
@@ -109,7 +124,7 @@ public class AuthView {
             continue;
         }
     }
-    private String nameValidation(String name){
+    private String validateName(String name){
         if(name.isEmpty()){
             return "Empty names are not accepted.";
         }else if(name.length() > 30){
@@ -124,36 +139,47 @@ public class AuthView {
         }
     }
     private String readPassword(){
-        String password = null;
-        String passwordVerificationResult = null;
+        return genericPasswordReader(
+            () -> scan.nextLine(),
+            () -> System.out.print("Type: ")
+        );
+    }
+    private String readHiddenPassword(){
+        return genericPasswordReader(
+            () -> readHiddenInput(),
+            () -> System.out.print("Type (won't show): ")
+        );
+    }
+    private String genericPasswordReader(Supplier<String> supplier, Runnable runnable){
         while(true){
-            System.out.print("Type a password: ");
-            password = scan.nextLine();
-            passwordVerificationResult = passwordValidation(password);
-            if(passwordVerificationResult == null){
-                System.out.print("Type again to confirm your password: ");
-                if(password.equals(scan.nextLine())){
-                    return password;
+            runnable.run();
+            String password = supplier.get();
+            String error = validatePassword(password);
+            if(error == null){
+                for(int i = 3; i >= 0; i--){
+                    System.out.print("Type again to confirm your password: ");
+                    if(password.equals(supplier.get())){
+                        return password;
+                    }
+                    System.out.println("The password do not match, try again (you have " + i + " more attempts)." );
                 }
-                System.out.println("The password dont match, try again!");
+                return null;
             }else{
-                System.out.println(passwordVerificationResult);
+                System.out.println(error);
             }
         }
     }
-    
     public String readHiddenInput(){
         Console console = System.console();
         if(console == null){
-            return null;
+            System.out.println("Warning: The program cannot find a console, which means that it's running in an IDE. Please run it in a simple terminal.");
+            System.out.print("Type your password (it will be visible in the IDE terminal): ");
+            return scan.nextLine();
         }
-        while(true){
-            System.out.print("Type (the password wont show): ");
-            return String.valueOf(console.readPassword());
-        }
+        return String.valueOf(console.readPassword());
     }
 
-    private String passwordValidation(String password){
+    private String validatePassword(String password){
         if(password.isEmpty()){
             return "Empty passwords are not accepted.";
         }else if(password.length() < 8 || password.length() > 64){
@@ -167,41 +193,30 @@ public class AuthView {
     }
 
     private int readAge(){
-        Integer ageConverted = null;
-        String ageResultValidation = null;
         while(true){
-            System.out.print("Type your age (Just integers like '20'): ");
-            ageConverted = convertAge(scan.nextLine());
+            System.out.print("Type your age (just integers like '20'): ");
+            Integer ageConverted = convertAge(scan.nextLine());
             if(ageConverted == null){
                 System.out.println("Write a valid age!");
                 continue;
             }
-            ageResultValidation = validateAge(ageConverted);
-            if(ageResultValidation == null){
-                return ageConverted;
+            if(ageConverted < 18 || ageConverted > 99){
+                System.out.println("Minimum age is 18 years old and max is 99 years old.");
+                continue;
             }
-            System.out.println(ageResultValidation);
+            return ageConverted;
         }
     }
     public Integer convertAge(String ageInSring){
         try{
-            Integer age = null;
             if(!ageInSring.isEmpty() && !(ageInSring == null)){
-                age = Integer.valueOf(ageInSring);
-                return age;
+                return Integer.valueOf(ageInSring);
             }else{
                 return null;
             }
         }catch(NumberFormatException  e){
             return null;
         }
-    }
-    public String validateAge(int age){
-        if(age < 18 || age > 99){
-            return "Minimum age is 18 years old and max is 99 years old.";
-        }
-        return null;
-            
     }
 
     private void clearConsole() { 
