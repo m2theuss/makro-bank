@@ -11,13 +11,13 @@ public class AuthController{
     }
     public boolean create(User user) { //true if the user has been created sucesufully
         user.setSalt(
-                PasswordUtils.fromByteToString(PasswordUtils.saltGenerator())
+                PasswordUtils.fromByteToStringInBase64(PasswordUtils.saltGenerator())
         );
         user.setPassword(
-                PasswordUtils.fromByteToString(
+                PasswordUtils.fromByteToStringInBase64(
                         PasswordUtils.hashGenerator(
                                 user.getPassword(), 
-                                PasswordUtils.fromStringToByte(user.getSalt())
+                                PasswordUtils.fromStringToByteInBase64(user.getSalt())
                 ))
         );
         if(!nameUserExist(user.getName())){
@@ -31,9 +31,9 @@ public class AuthController{
         if(saltValue == null){
             return null;
         }
-        String userPasswordHash = PasswordUtils.fromByteToString(
+        String userPasswordHash = PasswordUtils.fromByteToStringInBase64(
                 PasswordUtils.hashGenerator(
-                        userPassword, PasswordUtils.fromStringToByte(saltValue)
+                        userPassword, PasswordUtils.fromStringToByteInBase64(saltValue)
                 )
         );
         if(userPasswordHash.equals(userDAO.findPasswordByName(userName))){

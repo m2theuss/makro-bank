@@ -61,11 +61,11 @@ public class AuthView {
                 case 2 -> {
                     User user = login();
                     if(user == null){
-                        return "Your password or username is incorrect, try again.";
-                        
+                        return "Your password or username is incorrect, try again.";   
                     }
-                    return "Your is now logged, your token is: " + user.getPayload() + new TokenService().tokenIsValid(user.getPayload());
-                    
+                    AccountView accountView = new AccountView(user,scan);
+                    accountView.start();
+                    return "Your is now logged";
                 }
                 case 3 -> {
                     return null;

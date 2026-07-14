@@ -16,6 +16,7 @@ public class User {
     private String payload;
     private String salt;
 
+    public User(){}
     public User(String name, String password, int age, Balance balance) {
         this.name = name;
         this.password = password;

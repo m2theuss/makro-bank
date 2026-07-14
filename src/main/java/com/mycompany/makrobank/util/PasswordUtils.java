@@ -32,10 +32,10 @@ public class PasswordUtils {
         randomValue.nextBytes(bytes);
         return bytes;
     }
-    public static String fromByteToString(byte[] bytes){
+    public static String fromByteToStringInBase64(byte[] bytes){
         return Base64.getEncoder().encodeToString(bytes);
     }
-    public static byte[] fromStringToByte(String value){
+    public static byte[] fromStringToByteInBase64(String value){
         return Base64.getDecoder().decode(value);
     }
 }
