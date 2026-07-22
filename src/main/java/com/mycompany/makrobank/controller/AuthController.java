@@ -29,6 +29,7 @@ public class AuthController{
     public User login(String userName, String userPassword){
         String saltValue = userDAO.findSaltByName(userName);
         if(saltValue == null){
+            System.out.println("1");
             return null;
         }
         String userPasswordHash = PasswordUtils.fromByteToStringInBase64(
@@ -37,16 +38,21 @@ public class AuthController{
                 )
         );
         if(userPasswordHash.equals(userDAO.findPasswordByName(userName))){
-            User tmp = new User(
+            
+            User user = new User(
                 userName, 
                 userPasswordHash, 
                 userDAO.findAgeByName(userName),
                 new Balance(userDAO.findBalanceByName(userName))
             );
-            tmp.setPayload(new TokenService().generateToken(userName));
-            return tmp;
+            System.out.println("vazou aqui, deve nao ser nulo");
+            user.setPayload(new TokenService().generateToken(userName));
+            return user;
         } 
+        
+        System.out.println("retornou nulo");
         return null;
+
     }
     public boolean nameUserExist(String name){
         if(userDAO.findUserByName(name) == null){

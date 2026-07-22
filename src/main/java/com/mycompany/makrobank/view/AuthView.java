@@ -9,7 +9,6 @@ import com.mycompany.makrobank.model.domain.User;
 import com.mycompany.makrobank.security.TokenService;
 public class AuthView {
     private final Scanner scan; 
-    private final String HIDDEN_PASSWORD = "Do you want hide your password while typing (Y or N)? ";
     public AuthView(Scanner scan){
         this.scan = scan;
     }
@@ -21,14 +20,15 @@ public class AuthView {
         while(true){
             String action = executeAction(readOptions());
             if(action == null){
-                System.out.println("Bye");
+                System.out.println("Bye!");
                 return;
             }
+            clearConsole();
             System.out.println(action);
         }
 
     }
-    public int readOptions(){
+    public int readOptions(){ //return a integer value from 1 to 3 representing a option.
         final String INVALID_OPTION = "Please, write some valid option.";
         while(true){
             System.out.println("""
@@ -37,10 +37,12 @@ public class AuthView {
                 [3] - To exit""");
             System.out.print("> ");
             try{
-                int option = scan.nextInt();
-                scan.nextLine();
-                if(option >= 1 && option <= 3){
-                    return option;
+                String tmp = scan.nextLine();
+                if(!tmp.isEmpty()){
+                    int option = Integer.valueOf(tmp);
+                    if(option >= 1 && option <= 3){
+                        return option;
+                    }
                 }
                 System.out.println(INVALID_OPTION);
             }catch(Exception e){
@@ -61,10 +63,10 @@ public class AuthView {
                 case 2 -> {
                     User user = login();
                     if(user == null){
-                        return "Your password or username is incorrect, try again.";   
+                        return "You have been blocked. Try again or later!";   
                     }
                     AccountView accountView = new AccountView(user,scan);
-                    accountView.start();
+                    accountView.start(user);
                     return "Your is now logged";
                 }
                 case 3 -> {
@@ -78,7 +80,7 @@ public class AuthView {
 
     private boolean create(){ 
         System.out.println("Let's create an account!");
-        String name = readName();
+        String name = readValidName();
         String password = readPasswordByChoice(() -> readPassword(), () -> readHiddenPassword());
         if(password == null){
             return false;
@@ -90,42 +92,50 @@ public class AuthView {
     }
     private User login(){
         AuthController controller = new AuthController();
-        for(int i = 3; i < 0; i--){
-            String name;
+        String name;
+        for(int i = 3; i > 0; i--){
             while(true){
                 System.out.print("Type the user: ");
-                name = nameValidation(scan.nextLine());
-                if(name == null){
+                name = scan.nextLine();
+                String error = nameValidation(name);
+                if(error == null){
                     break;
                 }   
-                System.out.println(name);
+                System.out.println(error);
             }
             String password = readPasswordByChoice(() -> scan.nextLine(), () -> readSecureInput()); 
-            User result = controller.login(name,password);
-            if(result == null){
+            User user = controller.login(name,password);
+            if(user == null){
                 System.out.println("Username or password incorrect, try again.");
+                continue;
             }
+            return user;
         }
-        System.out.println("Your has been blocked, try again or later.");
         return null;
     }
-    private String readName(){
-        String nameVerificationResult = null;
-        String name = null;
-        System.out.print("Type name: ");
+    private String readValidName(){
         while(true){
-            name = scan.nextLine();
-            nameVerificationResult = nameValidation(name);
-            if(nameVerificationResult == null){
-                boolean nameExist = new AuthController().nameUserExist(name);
-                if(nameExist){
-                    System.out.print("This name already exist, type other: ");
+            System.out.print("Type name: ");
+            String name = scan.nextLine();
+            String error = nameValidation(name);
+            if(error == null){
+                if(!nameIsAvaliable(name)){
+                    System.out.println("This name is not avaliable. ");
+                    continue;
                 }
                 return name;
             }
-            System.out.println(nameVerificationResult);
+            System.out.println(error);
             continue;
         }
+    }
+    private boolean nameIsAvaliable(String name){
+        if(name != null){
+            if(new AuthController().nameUserExist(name)){
+                return false;
+            }
+        }
+        return true;
     }
     private String nameValidation(String name){
         if(name.isEmpty()){
@@ -146,7 +156,7 @@ public class AuthView {
                 System.out.print("Type: ");
                 return plainPassword.get();
             }else if("y".equalsIgnoreCase(choise)){
-                System.out.print("Type (won't show): ");
+                System.out.print("Type (wont show): ");
                 return hiddenPassword.get();
             }
             System.out.print("Write a valid option (Y / N): ");
@@ -155,13 +165,13 @@ public class AuthView {
     private String readPassword(){
         return genericPasswordReader(
             () -> scan.nextLine(),
-            () -> System.out.print("Type: ")
+            () -> System.out.print("")
         );
     }
     private String readHiddenPassword(){
         return genericPasswordReader(
             () -> readSecureInput(),
-            () -> System.out.print("Type (won't show): ")
+            () -> System.out.print("")
         );
     }
     private String genericPasswordReader(Supplier<String> supplier, Runnable runnable){
