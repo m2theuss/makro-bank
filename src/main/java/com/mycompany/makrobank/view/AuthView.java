@@ -67,14 +67,13 @@ public class AuthView {
                     }
                     AccountView accountView = new AccountView(user,scan);
                     accountView.start(user);
-                    return "Your is now logged";
+                    return null;
                 }
                 case 3 -> {
                     return null;
                 }
                 default -> {
                     return "A valid option is 1,2 or 3. Try again.";
-                }
             }
     }
 
