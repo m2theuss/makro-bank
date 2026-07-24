@@ -75,6 +75,7 @@ public class AuthView {
                 default -> {
                     return "A valid option is 1,2 or 3. Try again.";
             }
+        }
     }
 
     private boolean create(){ 

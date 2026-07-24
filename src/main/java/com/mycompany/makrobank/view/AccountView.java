@@ -3,15 +3,18 @@ package com.mycompany.makrobank.view;
 import java.util.Scanner;
 import com.mycompany.makrobank.controller.AccountController;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.security.TokenService;
 
 public class AccountView {
     private User user;
     private Scanner scan;
     private AccountController accountController;
+    private TokenService tokenService;
     public AccountView(User user, Scanner scan){
         this.user = user; 
         this.scan = scan;
         this.accountController = new AccountController();
+        this.tokenService = new TokenService();
     }
 
     public void start(User user){
@@ -19,7 +22,7 @@ public class AccountView {
             System.out.println("User cannot be null.");
             return;
         }
-        executeAction(readOptions());
+        System.out.println(executeAction(readOptions()));
 
     }
     public int readOptions(){ //return a integer value from 1 to 3 representing a option.
@@ -46,46 +49,74 @@ public class AccountView {
             }
         }
     }
-    public void executeAction(int option){
+    public String executeAction(int option){
         switch (option){
             case 1 ->{
-                System.out.println("Your balance is actually: " + user.getInstanceOfBalance().getBalance());
+                return "Your balance is actually: " + user.getInstanceOfBalance().getBalance();
             }
             case 2 -> {
-                String error = accountController.makePix(user);
-                if(error == null){
-                    return "Your PIX was successfully done!";
+                if(preparePixPayment()){
+                    return "Pix was made with succesfully!";
                 }
-                return error;
+                return "Some error happen, try again or later.";
             }
         }
+        return null;
     }
-    public void makePixPayment(){
-        int amount = readAndValidatePixAmount();    
-    }
-    public int readAndValidatePixAmount(){
+    public boolean preparePixPayment(){
         while(true){
-            System.out.print("How much money do you want to tranfer? ");
-            try{
+            double amountToSend = readPixAmount();
+            if(isPixAmountValid(amountToSend)){
+                if(hasEnoughBalance(amountToSend)){
+                    String pixReceiver = scan.nextLine();
+                    return makePixPayment(pixReceiver, amountToSend);
+                }  
+            }
+            System.out.println("Write a valid pix value to transfer (more than 0)");
+        }
+    }
+    public double readPixAmount() {
+        while (true) {
+            System.out.print("How much money do you want to transfer? ");
+            try {
                 String tmp = scan.nextLine();
-                if(tmp.isEmpty() || tmp == null){
-                    System.out.println("Empty value are not accepted!");
+                if (tmp == null || tmp.trim().isEmpty()) {
+                    System.out.println("Empty values are not accepted!");
                     continue;
                 }
-                int amount = Integer.valueOf(tmp);
-                if(amount > 0){
-                    return amount;
-                }
-                System.out.println("Minimum value is 1.");
-            }catch (NumberFormatException e){
+                return Double.valueOf(tmp);
+                
+            } catch (NumberFormatException e) {
                 System.out.println("Write just a number!");
             }
         }
     }
+    public boolean isPixAmountValid(double amount) {
+        if (amount <= 0) {
+            return false;
+        }
+        return true;
+    }
+    public boolean hasEnoughBalance(double amount){
+        if((user.getInstanceOfBalance().getBalance() - amount) < 0){
+            return false;
+        }
+        return true;
+    }
+    public boolean makePixPayment(String receiverName, double amountToSend){
+        if(accountController.receiverExist(receiverName)){
+            return accountController.makePixPayment(user.getName(),receiverName, amountToSend);
+        }
+        return false;
+    }
+
     public void printUserDetails(){
         System.out.println("=========== USER INFORMATIONS ============");
         System.out.println("Name of the user:" + user.getName());
         System.out.println("Current balance: " + user.getInstanceOfBalance().getBalance());
         System.out.println("==========================================");
+    }
+    public boolean checkJWT(){
+        return tokenService.tokenIsValid(user.getJWT());
     }
 }

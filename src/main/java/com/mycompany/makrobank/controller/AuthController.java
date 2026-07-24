@@ -46,7 +46,7 @@ public class AuthController{
                 new Balance(userDAO.findBalanceByName(userName))
             );
             System.out.println("vazou aqui, deve nao ser nulo");
-            user.setPayload(new TokenService().generateToken(userName));
+            user.setJWT(new TokenService().generateToken(userName));
             return user;
         } 
         

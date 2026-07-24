@@ -7,7 +7,14 @@ public class AccountController {
     public AccountController(){
         this.userDAO = new UserDAO();
     }
-    public String makePix(int amount){
-        
+    public boolean receiverExist(String receiver){
+        if(userDAO.findUserByName(receiver) == null){
+            return false;
+        }
+        return true;
+    }
+    public boolean makePixPayment(String sender, String receiver, double amount){
+        UserDAO.takeAmount(sender, amount);
+        UserDAO.setAmount(receiver, amount);
     }
 }

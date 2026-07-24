@@ -14,7 +14,6 @@ public class Balance {
     }
     public boolean takeAmount(double amount){
         if((balanceValue - amount) < 0){
-            System.out.println("You cannot take this amout. Otherwise your balance will become less than 0.");
             return false;
         }
         balanceValue -= amount;
