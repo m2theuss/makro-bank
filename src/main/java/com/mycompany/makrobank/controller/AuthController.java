@@ -45,17 +45,14 @@ public class AuthController{
                 userDAO.findAgeByName(userName),
                 new Balance(userDAO.findBalanceByName(userName))
             );
-            System.out.println("vazou aqui, deve nao ser nulo");
             user.setJWT(new TokenService().generateToken(userName));
             return user;
         } 
-        
-        System.out.println("retornou nulo");
         return null;
 
     }
     public boolean nameUserExist(String name){
-        if(userDAO.findUserByName(name) == null){
+        if(userDAO.findNameByName(name) == null){
             return false;
         }else{
             return true;

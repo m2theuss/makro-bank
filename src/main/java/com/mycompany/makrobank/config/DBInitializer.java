@@ -7,7 +7,6 @@ public class DBInitializer {
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "name TEXT,"
                 + "password TEXT,"
-                + "token TEXT,"
                 + "salt TEXT,"
                 + "age INTEGER,"
                 + "balance DOUBLE"

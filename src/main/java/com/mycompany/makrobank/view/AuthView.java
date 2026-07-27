@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
-import com.mycompany.makrobank.security.TokenService;
 public class AuthView {
     private final Scanner scan; 
     public AuthView(Scanner scan){
@@ -65,8 +64,9 @@ public class AuthView {
                     if(user == null){
                         return "You have been blocked. Try again or later!";   
                     }
+                    clearConsole();
                     AccountView accountView = new AccountView(user,scan);
-                    accountView.start(user);
+                    accountView.start();
                     return null;
                 }
                 case 3 -> {

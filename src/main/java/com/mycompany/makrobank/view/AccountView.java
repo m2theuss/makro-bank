@@ -1,5 +1,6 @@
 package com.mycompany.makrobank.view;
 
+import java.util.Random;
 import java.util.Scanner;
 import com.mycompany.makrobank.controller.AccountController;
 import com.mycompany.makrobank.model.domain.User;
@@ -17,28 +18,36 @@ public class AccountView {
         this.tokenService = new TokenService();
     }
 
-    public void start(User user){
+    public void start(){
         if(user == null){
             System.out.println("User cannot be null.");
             return;
         }
-        System.out.println(executeAction(readOptions()));
-
+        System.out.println("Hi, " + user.getName() + ".");
+        System.out.println("Type some options to make in your account.");
+        while(true){
+            String error = executeAction(readOptions());
+            if(error != null){
+                System.out.println(error);
+            }
+            break;
+        }
     }
-    public int readOptions(){ //return a integer value from 1 to 3 representing a option.
+    public int readOptions(){ //return a integer value from 1 to 5 representing a option.
         final String INVALID_OPTION = "Please, write some valid option.";
         while(true){
             System.out.println("""
                 [1] - See my balance
                 [2] - Make a pix
-                [3] - Delete my account
-                [4] - Exit""");
+                [3] - Deposit
+                [4] - Delete my account
+                [5] - Exit""");
             System.out.print("> ");
             try{
                 String tmp = scan.nextLine();
                 if(!tmp.isEmpty()){
                     int option = Integer.valueOf(tmp);
-                    if(option >= 1 && option <= 3){
+                    if(option >= 1 && option <= 5){
                         return option;
                     }
                 }
@@ -60,24 +69,45 @@ public class AccountView {
                 }
                 return "Some error happen, try again or later.";
             }
+            case 3 ->{
+                if(makeDeposit()){
+                    return "The deposit was succesfully made!";
+                }
+                return "A error happen when try make a deposit. Try again or later.";
+            }
+            case 4 ->{
+                if(deleteAccount()){
+
+                }
+            }
+            case 5 -> {
+                return null;
+            }
         }
         return null;
     }
     public boolean preparePixPayment(){
         while(true){
-            double amountToSend = readPixAmount();
+            System.out.println("How much money do you want to transfer? ");
+            double amountToSend = readAmount();
             if(isPixAmountValid(amountToSend)){
                 if(hasEnoughBalance(amountToSend)){
-                    String pixReceiver = scan.nextLine();
-                    return makePixPayment(pixReceiver, amountToSend);
-                }  
+                    String receiver = readReceiver();
+                    if(receiver.equals(user.getName())){
+                        System.out.println("You cannot tranfer to yourself.");
+                        continue;
+                    }
+                    return makePixPayment(receiver, amountToSend);
+                }
+                System.out.println("You dont have enough balance, try again.");
+                continue; 
             }
             System.out.println("Write a valid pix value to transfer (more than 0)");
         }
     }
-    public double readPixAmount() {
+    public double readAmount() {
         while (true) {
-            System.out.print("How much money do you want to transfer? ");
+            System.out.print("Type: ");
             try {
                 String tmp = scan.nextLine();
                 if (tmp == null || tmp.trim().isEmpty()) {
@@ -103,13 +133,47 @@ public class AccountView {
         }
         return true;
     }
+    public String readReceiver(){
+        while(true){
+            System.out.print("Write the name of the receiver: ");
+            String receiver = scan.nextLine();
+            if(accountController.receiverExist(receiver)){
+                return receiver;
+            }
+            System.out.println("The user dont exist, try again!");
+        }
+    }
     public boolean makePixPayment(String receiverName, double amountToSend){
         if(accountController.receiverExist(receiverName)){
-            return accountController.makePixPayment(user.getName(),receiverName, amountToSend);
+            return accountController.makePixPayment(user,receiverName, amountToSend);
         }
         return false;
     }
-
+    public boolean makeDeposit(){
+        System.out.println("Write a value to be deposited. ");
+        double amount = readAmount();
+        if(accountController.makeDeposit(user, amount)){
+            return true;
+        }
+        return false;
+    }
+    public int readDeposit(){
+        while(true){
+        }
+    }
+    public boolean deleteAccount(){
+        System.out.println("WARNING: THIS ACTION CANNOT BE UNDONE!");
+        System.out.println("Write the check code to confirm this action:");
+        while(true){
+            System.out.println("Code: " + generateConfirmationCode());
+            String codeConfirmation = scan.nextLine();
+        }
+    }
+    public String generateConfirmationCode(){
+        Random random = new Random();
+        char c = (char)(65 + random.nextInt(26));
+        return String.valueOf(random.nextInt(9000) + 1000 + c);
+    }
     public void printUserDetails(){
         System.out.println("=========== USER INFORMATIONS ============");
         System.out.println("Name of the user:" + user.getName());
