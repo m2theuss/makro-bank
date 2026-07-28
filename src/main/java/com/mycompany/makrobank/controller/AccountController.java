@@ -34,4 +34,7 @@ public class AccountController {
         }
         return false;
     }
+    public boolean deleteAccount(User user){
+        return userDAO.deleteAccount(user);
+    }
 }

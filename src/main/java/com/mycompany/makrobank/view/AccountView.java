@@ -77,8 +77,10 @@ public class AccountView {
             }
             case 4 ->{
                 if(deleteAccount()){
-
+                   System.out.println("Your account was deleted");
+                   return null;
                 }
+                return "Action was canceled";
             }
             case 5 -> {
                 return null;
@@ -162,17 +164,54 @@ public class AccountView {
         }
     }
     public boolean deleteAccount(){
+        if (shouldDeleteAccount()) {
+            if (readAndValidateConfirmationCode()) {
+                return accountController.deleteAccount(user);
+            }
+        }
+        return false;
+    }
+
+    public boolean readAndValidateConfirmationCode() {
+        System.out.println("Write the check code below to confirm this action: ");
+        while (true) {
+            String code = generateConfirmationCode();
+            System.out.println("Code: " + code);
+            String codeInput = scan.nextLine();
+            if (codeInput == null) {
+                System.out.println("Input stream closed. Action canceled.");
+                return false;
+            }
+            if (codeInput.equals(code)) {
+                return true;
+            }
+            System.out.println("The confirmation code doesn't match. Try again.");
+        }
+    }
+    public boolean shouldDeleteAccount(){
         System.out.println("WARNING: THIS ACTION CANNOT BE UNDONE!");
-        System.out.println("Write the check code to confirm this action:");
-        while(true){
-            System.out.println("Code: " + generateConfirmationCode());
-            String codeConfirmation = scan.nextLine();
+        while (true) {
+            System.out.println("You are about to delete your account, type 'N' to cancel this action or 'Y' to continue. ");
+            System.out.print("Type: ");
+            String decision = scan.nextLine();
+            if (decision == null) {
+                System.out.println("Input stream closed. Action canceled.");
+                return false;
+            }
+            decision = decision.trim();
+            if ("Y".equalsIgnoreCase(decision)) {
+                return true;
+            } 
+            if ("N".equalsIgnoreCase(decision)) {
+                return false;
+            }
+            System.out.println("Invalid input. Please type only 'Y' or 'N'.");
         }
     }
     public String generateConfirmationCode(){
         Random random = new Random();
-        char c = (char)(65 + random.nextInt(26));
-        return String.valueOf(random.nextInt(9000) + 1000 + c);
+        char randomWord = (char)(65 + random.nextInt(26));
+        return String.valueOf(random.nextInt(9000) + 1000 + randomWord);
     }
     public void printUserDetails(){
         System.out.println("=========== USER INFORMATIONS ============");

@@ -126,4 +126,19 @@ public class UserDAO {
             return false;
         }
     }
+    public boolean deleteAccount(User user){
+        var query = "DELETE FROM user "
+                + "WHERE name like ?";
+        var db = new DBConnection().getConnection();
+        try(var pstmt = db.prepareStatement(query)){
+        pstmt.setString(1, user.getName());
+        if(pstmt.executeUpdate() > 0){
+            return true;
+        }
+        return false;
+        }catch(SQLException e){
+            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            return false;
+        }
+    }
 }
