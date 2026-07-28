@@ -2,24 +2,19 @@ package com.mycompany.makrobank.controller;
 import com.mycompany.makrobank.model.dao.UserDAO;
 import com.mycompany.makrobank.model.domain.*;
 import com.mycompany.makrobank.security.TokenService;
+import com.mycompany.makrobank.service.AuthService;
 import com.mycompany.makrobank.util.*;
 
 public class AuthController{
     private final UserDAO userDAO; 
-    public AuthController(){
-        this.userDAO = new UserDAO();
+    private final AuthService authService;
+    public AuthController(UserDAO userDAO, AuthService authService){
+        this.userDAO = userDAO;
+        this.authService = authService;
     }
     public boolean create(User user) { //true if the user has been created sucesufully
-        user.setSalt(
-                PasswordUtils.fromByteToStringInBase64(PasswordUtils.saltGenerator())
-        );
-        user.setPassword(
-                PasswordUtils.fromByteToStringInBase64(
-                        PasswordUtils.hashGenerator(
-                                user.getPassword(), 
-                                PasswordUtils.fromStringToByteInBase64(user.getSalt())
-                ))
-        );
+        authService.create(user);
+        authService.nameUserExist(user);
         if(!nameUserExist(user.getName())){
             return userDAO.create(user);
         }else{
