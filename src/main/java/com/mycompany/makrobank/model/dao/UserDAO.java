@@ -1,8 +1,6 @@
 package com.mycompany.makrobank.model.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-
 import com.mycompany.makrobank.config.*;
 import com.mycompany.makrobank.model.domain.*;
 public class UserDAO {
@@ -16,7 +14,7 @@ public class UserDAO {
             pstmt.setString(1,user.getName());
             pstmt.setString(2, user.getPassword());
             pstmt.setInt(3, user.getAge());
-            pstmt.setDouble(4, user.getInstanceOfBalance().getBalance());
+            pstmt.setDouble(4, user.getBalance().getBalance());
             pstmt.setString(5, user.getSalt());
             pstmt.executeUpdate();
             return true;

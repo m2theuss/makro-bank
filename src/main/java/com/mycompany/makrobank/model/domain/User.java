@@ -62,7 +62,7 @@ public class User {
     public void setJWT(String payload){
         this.JWT = payload;
     }
-    public Balance getInstanceOfBalance(){
+    public Balance getBalance(){
         return balance;
     }
     public static boolean isAdult(int age){

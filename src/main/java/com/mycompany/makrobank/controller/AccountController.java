@@ -2,11 +2,14 @@ package com.mycompany.makrobank.controller;
 
 import com.mycompany.makrobank.model.dao.UserDAO;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.service.AccountService;
 
 public class AccountController {
     private UserDAO userDAO;
-    public AccountController(){
-        this.userDAO = new UserDAO();
+    private AccountService accountService;
+    public AccountController(UserDAO userDAO, AccountService accountService){
+        this.userDAO = userDAO;
+        this.accountService = accountService;
     }
     public boolean receiverExist(String receiver){
         if(userDAO.findNameByName(receiver) == null){
@@ -15,26 +18,20 @@ public class AccountController {
         return true;
     }
     public boolean makePixPayment(User sender, String receiverName, double amount){
-        if(sender.getName().equals(receiverName)){
-            return false;
-        }
-        boolean senderResult = userDAO.updateBalanceByName(sender.getName(), (amount * -1));
-        sender.getInstanceOfBalance().takeAmount(amount);
-
-        boolean receiverResult = userDAO.updateBalanceByName(receiverName, amount);
-        if(senderResult && receiverResult){
-            return true;
-        }
-        return false;
+        return accountService.makePixPayment(sender, receiverName, amount);
+        
     }
     public boolean makeDeposit(User user,double amount){
         if(userDAO.updateBalanceByName(user.getName(), amount)){
-            user.getInstanceOfBalance().addAmount(amount);
+            user.getBalance().addAmount(amount);
             return true;
         }
         return false;
     }
     public boolean deleteAccount(User user){
         return userDAO.deleteAccount(user);
+    }
+    public boolean nameExist(String userName){
+        return userDAO.findNameByName(userName) != null;
     }
 }

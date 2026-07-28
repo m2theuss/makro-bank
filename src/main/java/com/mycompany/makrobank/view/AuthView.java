@@ -6,10 +6,15 @@ import java.util.function.Supplier;
 import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.service.AuthService;
 public class AuthView {
     private final Scanner scan; 
-    public AuthView(Scanner scan){
+    private final AuthService authService;
+    private final AuthController authController;
+    public AuthView(Scanner scan,AuthController authController ,AuthService authService){
         this.scan = scan;
+        this.authController = authController;
+        this.authService = authService;
     }
 
     public void start(){
@@ -87,11 +92,9 @@ public class AuthView {
         }
         int age = readAge();
         User newUser = new User(name,password,age, new Balance(0));
-        AuthController controller = new AuthController();
-        return controller.create(newUser);
+        return authController.create(newUser);
     }
     private User login(){
-        AuthController controller = new AuthController();
         String name;
         for(int i = 3; i > 0; i--){
             while(true){
@@ -104,7 +107,7 @@ public class AuthView {
                 System.out.println(error);
             }
             String password = readPasswordByChoice(() -> scan.nextLine(), () -> readSecureInput()); 
-            User user = controller.login(name,password);
+            User user = authController.login(name,password);
             if(user == null){
                 System.out.println("Username or password incorrect, try again.");
                 continue;
@@ -131,7 +134,7 @@ public class AuthView {
     }
     private boolean nameIsAvaliable(String name){
         if(name != null){
-            if(new AuthController().nameUserExist(name)){
+            if(authController.isNameAvaliable(name)){
                 return false;
             }
         }

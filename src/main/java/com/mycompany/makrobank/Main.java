@@ -6,6 +6,9 @@ package com.mycompany.makrobank;
 import java.util.Scanner;
 
 import com.mycompany.makrobank.config.*;
+import com.mycompany.makrobank.controller.AuthController;
+import com.mycompany.makrobank.model.dao.UserDAO;
+import com.mycompany.makrobank.service.AuthService;
 import com.mycompany.makrobank.view.*;
 /**
  *
@@ -14,10 +17,13 @@ import com.mycompany.makrobank.view.*;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello");
         DBInitializer.verifyDB();
         Scanner scan = new Scanner(System.in);
-        AuthView userLogin = new AuthView(scan);
+
+        UserDAO userDAO = new UserDAO();
+        AuthService authService = new AuthService(userDAO);
+        AuthController authController = new AuthController(authService);
+        AuthView userLogin = new AuthView(scan, authController,authService);
         userLogin.start();
     }
 }

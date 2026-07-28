@@ -61,7 +61,7 @@ public class AccountView {
     public String executeAction(int option){
         switch (option){
             case 1 ->{
-                return "Your balance is actually: " + user.getInstanceOfBalance().getBalance();
+                return "Your balance is actually: " + user.getBalance().getBalance();
             }
             case 2 -> {
                 if(preparePixPayment()){
@@ -130,7 +130,7 @@ public class AccountView {
         return true;
     }
     public boolean hasEnoughBalance(double amount){
-        if((user.getInstanceOfBalance().getBalance() - amount) < 0){
+        if((user.getBalance().getBalance() - amount) < 0){
             return false;
         }
         return true;
@@ -216,7 +216,7 @@ public class AccountView {
     public void printUserDetails(){
         System.out.println("=========== USER INFORMATIONS ============");
         System.out.println("Name of the user:" + user.getName());
-        System.out.println("Current balance: " + user.getInstanceOfBalance().getBalance());
+        System.out.println("Current balance: " + user.getBalance().getBalance());
         System.out.println("==========================================");
     }
     public boolean checkJWT(){
