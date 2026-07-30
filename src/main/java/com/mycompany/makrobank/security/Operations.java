@@ -26,7 +26,7 @@ public class Operations implements SecurityInterceptor{
         return tokenService.tokenIsValid(token);
     }
     public boolean usernameExist(String name){
-        return accountController.usernameExist(name)
+        return accountController.usernameExist(name);
     }
 
 }
