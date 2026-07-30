@@ -36,8 +36,8 @@ public class AccountService {
     private boolean reverseTransfer(String name, double amount){
         return userDAO.updateBalanceByName(name, amount);
     }
-    public boolean nameExist(String name){
-        return userDAO.findNameByName(name) != null;
+    public boolean usernameExist(String name){
+        return userDAO.findUserByName(name).getName() != null;
     }
     public boolean deleteAccount(User user){
         return userDAO.deleteAccount(user);

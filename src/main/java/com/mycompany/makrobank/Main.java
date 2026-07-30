@@ -21,10 +21,10 @@ public class Main {
         AuthService authService = new AuthService(userDAO);
         AuthController authController = new AuthController(authService);
         AccountService accountService = new AccountService(userDAO);
-        AccountController accountController = new AccountController(userDAO, accountService);
+        AccountController accountController = new AccountController(accountService);
         TokenService tokenService = new TokenService();
         AccountView accountView = new AccountView(scan, accountController, tokenService);
-        AuthView userLogin = new AuthView(scan, authController, accountView);
-        userLogin.start();
+        AuthView authView = new AuthView(scan, authController, accountView);
+        authView.start();
     }
 }

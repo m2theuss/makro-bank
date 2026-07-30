@@ -4,7 +4,6 @@ import java.util.Scanner;
 import java.util.function.Supplier;
 
 import com.mycompany.makrobank.controller.AuthController;
-import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
 public class AuthView {
     private final Scanner scan; 
@@ -87,7 +86,7 @@ public class AuthView {
             return false;
         }
         int age = readAge();
-        User newUser = new User(name,password,age, new Balance(0));
+        User newUser = new User(name,password,age);
         return authController.create(newUser);
     }
     private User login(){

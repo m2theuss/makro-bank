@@ -59,11 +59,14 @@ public class AccountView {
     public String executeAction(User user,int option){
         switch (option){
             case 1 ->{
-                return "Your balance is actually: " + user.getBalance().getBalance();
+                if(tokenIsValid(user)){
+                    return "Your balance is actually: " + user.getBalance().getBalance();
+                }
+                return "Your token wasn't valid anymore.";
             }
             case 2 -> {
                 if(preparePixPayment(user)){
-                    return "Pix was made with succesfully!";
+                    return "PIX payment sent succesfully!";
                 }
                 return "Some error happen, try again or later.";
             }
@@ -137,14 +140,14 @@ public class AccountView {
         while(true){
             System.out.print("Write the name of the receiver: ");
             String receiver = scan.nextLine();
-            if(accountController.receiverExist(receiver)){
+            if(accountController.usernameExist(receiver)){
                 return receiver;
             }
             System.out.println("The user dont exist, try again!");
         }
     }
     public boolean makePixPayment(User user, String receiverName, double amountToSend){
-        if(accountController.receiverExist(receiverName)){
+        if(accountController.usernameExist(receiverName)){
             return accountController.makePixPayment(user,receiverName, amountToSend);
         }
         return false;
@@ -156,10 +159,6 @@ public class AccountView {
             return true;
         }
         return false;
-    }
-    public int readDeposit(){
-        while(true){
-        }
     }
     public boolean deleteAccount(User user){
         if (shouldDeleteAccount()) {
@@ -217,7 +216,7 @@ public class AccountView {
         System.out.println("Current balance: " + user.getBalance().getBalance());
         System.out.println("==========================================");
     }
-    public boolean checkToken(User user){
+    public boolean tokenIsValid(User user){
         return tokenService.tokenIsValid(user.getToken());
     }
 }

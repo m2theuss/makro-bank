@@ -1,9 +1,6 @@
 package com.mycompany.makrobank.service;
-
 import com.mycompany.makrobank.model.dao.UserDAO;
-import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
-import com.mycompany.makrobank.security.TokenService;
 import com.mycompany.makrobank.util.PasswordUtils;
 
 public class AuthService {
@@ -28,34 +25,24 @@ public class AuthService {
         return false;
     }
     public boolean isNameAvaliable(String name){
-        return userDAO.findNameByName(name) == null;
+        return userDAO.findUserByName(name) == null;
     }
     
     public User login(String userName, String userPassword){
-        String saltValue = getSalt(userName);
-        if(saltValue != null){
-            String userPasswordHash = PasswordUtils.fromByteToStringInBase64(
-                    PasswordUtils.hashGenerator(
-                            userPassword, PasswordUtils.fromStringToByteInBase64(saltValue)
-                    )
-            );
-            if(userPasswordHash.equals(userDAO.findPasswordByName(userName))){
-                User user = new User(
-                    userName, 
-                    userPasswordHash, 
-                    userDAO.findAgeByName(userName),
-                    new Balance(userDAO.findBalanceByName(userName))
-                );
-                user.setToken(new TokenService().generateToken(userName));
-                return user;
-            } 
+        User dbUser = userDAO.findUserByName(userName);
+        if(dbUser == null){
             return null;
         }
+        String userPasswordHash = PasswordUtils.fromByteToStringInBase64(
+                PasswordUtils.hashGenerator(
+                        userPassword, PasswordUtils.fromStringToByteInBase64(dbUser.getSalt())
+                )
+        );
+        if(userPasswordHash.equals(dbUser.getPassword())){
+            return dbUser;
+        } 
         return null;
 
-    }
-    public String getSalt(String userName){
-        return userDAO.findSaltByName(userName);
     }
 }
 

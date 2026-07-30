@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.makrobank.model.domain;
 
-/**
- *
- * @author matheus
- */
 public class User {
     private String name;
     private String password;
@@ -16,12 +8,11 @@ public class User {
     private String token;
     private String salt;
 
-    public User(){}
-    public User(String name, String password, int age, Balance balance) {
+    public User(String name, String password, int age) {
         this.name = name;
         this.password = password;
         this.age = age;
-        this.balance = balance;
+        this.balance = new Balance(0);
         this.token = "";
         this.salt = "";
     }
