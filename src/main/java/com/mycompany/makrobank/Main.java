@@ -5,6 +5,7 @@ import com.mycompany.makrobank.config.*;
 import com.mycompany.makrobank.controller.AccountController;
 import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.dao.UserDAO;
+import com.mycompany.makrobank.security.Operations;
 import com.mycompany.makrobank.security.TokenService;
 import com.mycompany.makrobank.service.AccountService;
 import com.mycompany.makrobank.service.AuthService;
@@ -23,7 +24,8 @@ public class Main {
         AccountService accountService = new AccountService(userDAO);
         AccountController accountController = new AccountController(accountService);
         TokenService tokenService = new TokenService();
-        AccountView accountView = new AccountView(scan, accountController, tokenService);
+        Operations operations = new Operations(accountController, tokenService);
+        AccountView accountView = new AccountView(scan, operations, tokenService);
         AuthView authView = new AuthView(scan, authController, accountView);
         authView.start();
     }

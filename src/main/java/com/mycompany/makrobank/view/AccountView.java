@@ -4,15 +4,16 @@ import java.util.Random;
 import java.util.Scanner;
 import com.mycompany.makrobank.controller.AccountController;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.security.Operations;
 import com.mycompany.makrobank.security.TokenService;
 
 public class AccountView {
     private Scanner scan;
-    private AccountController accountController;
+    private Operations operations;
     private TokenService tokenService;
-    public AccountView(Scanner scan, AccountController accountController, TokenService tokenService){
+    public AccountView(Scanner scan, Operations operations, TokenService tokenService){
         this.scan = scan;
-        this.accountController = accountController;
+        this.operations = operations;
         this.tokenService = tokenService;
     }
 
@@ -140,22 +141,22 @@ public class AccountView {
         while(true){
             System.out.print("Write the name of the receiver: ");
             String receiver = scan.nextLine();
-            if(accountController.usernameExist(receiver)){
+            if(operations.usernameExist(receiver)){
                 return receiver;
             }
             System.out.println("The user dont exist, try again!");
         }
     }
     public boolean makePixPayment(User user, String receiverName, double amountToSend){
-        if(accountController.usernameExist(receiverName)){
-            return accountController.makePixPayment(user,receiverName, amountToSend);
+        if(operations.usernameExist(receiverName)){
+            return operations.makePixPayment(user,receiverName, amountToSend);
         }
         return false;
     }
     public boolean makeDeposit(User user){
         System.out.println("Write a value to be deposited. ");
         double amount = readAmount();
-        if(accountController.makeDeposit(user, amount)){
+        if(operations.makeDeposit(user, amount)){
             return true;
         }
         return false;
@@ -163,7 +164,7 @@ public class AccountView {
     public boolean deleteAccount(User user){
         if (shouldDeleteAccount()) {
             if (readAndValidateConfirmationCode()) {
-                return accountController.deleteAccount(user);
+                return operations.deleteAccount(user);
             }
         }
         return false;

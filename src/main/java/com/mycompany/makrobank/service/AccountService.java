@@ -1,13 +1,15 @@
 package com.mycompany.makrobank.service;
 import com.mycompany.makrobank.model.dao.UserDAO;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.security.SecurityInterceptor;
 
-public class AccountService {
+public class AccountService implements SecurityInterceptor {
     private final UserDAO userDAO;
 
     public AccountService(UserDAO userDAO){
         this.userDAO = userDAO;
     }
+    @Override
     public boolean makePixPayment(User sender, String receiverName, double amount){
         if(sender.getName().equals(receiverName)){
             return false;
@@ -36,12 +38,15 @@ public class AccountService {
     private boolean reverseTransfer(String name, double amount){
         return userDAO.updateBalanceByName(name, amount);
     }
+    @Override
     public boolean usernameExist(String name){
         return userDAO.findUserByName(name).getName() != null;
     }
+    @Override
     public boolean deleteAccount(User user){
         return userDAO.deleteAccount(user);
     }
+    @Override
     public boolean makeDeposit(User user,double amount){
         if(userDAO.updateBalanceByName(user.getName(), amount)){
             user.getBalance().addAmount(amount);
