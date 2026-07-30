@@ -46,7 +46,7 @@ public class AuthService {
                     userDAO.findAgeByName(userName),
                     new Balance(userDAO.findBalanceByName(userName))
                 );
-                user.setJWT(new TokenService().generateToken(userName));
+                user.setToken(new TokenService().generateToken(userName));
                 return user;
             } 
             return null;

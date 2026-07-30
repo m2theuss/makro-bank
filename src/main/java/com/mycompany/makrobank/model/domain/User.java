@@ -13,7 +13,7 @@ public class User {
     private String password;
     private int age;
     private Balance balance;
-    private String JWT;
+    private String token;
     private String salt;
 
     public User(){}
@@ -22,7 +22,7 @@ public class User {
         this.password = password;
         this.age = age;
         this.balance = balance;
-        this.JWT = "";
+        this.token = "";
         this.salt = "";
     }
 
@@ -56,11 +56,11 @@ public class User {
     public void setSalt(String salt) {
         this.salt = salt;
     }
-    public String getJWT(){
-        return JWT;
+    public String getToken(){
+        return token;
     }
-    public void setJWT(String payload){
-        this.JWT = payload;
+    public void setToken(String payload){
+        this.token = payload;
     }
     public Balance getBalance(){
         return balance;

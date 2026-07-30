@@ -6,17 +6,15 @@ import java.util.function.Supplier;
 import com.mycompany.makrobank.controller.AuthController;
 import com.mycompany.makrobank.model.domain.Balance;
 import com.mycompany.makrobank.model.domain.User;
-import com.mycompany.makrobank.service.AuthService;
 public class AuthView {
     private final Scanner scan; 
-    private final AuthService authService;
     private final AuthController authController;
-    public AuthView(Scanner scan,AuthController authController ,AuthService authService){
+    private final AccountView accountView;
+    public AuthView(Scanner scan,AuthController authController, AccountView accountView){
         this.scan = scan;
         this.authController = authController;
-        this.authService = authService;
+        this.accountView = accountView;
     }
-
     public void start(){
         clearConsole();
         System.out.println("Welcome to the Makro bank, you're allways welcome!");
@@ -70,8 +68,7 @@ public class AuthView {
                         return "You have been blocked. Try again or later!";   
                     }
                     clearConsole();
-                    AccountView accountView = new AccountView(user,scan);
-                    accountView.start();
+                    accountView.start(user);
                     return null;
                 }
                 case 3 -> {
@@ -82,7 +79,6 @@ public class AuthView {
             }
         }
     }
-
     private boolean create(){ 
         System.out.println("Let's create an account!");
         String name = readValidName();
@@ -134,11 +130,9 @@ public class AuthView {
     }
     private boolean nameIsAvaliable(String name){
         if(name != null){
-            if(authController.isNameAvaliable(name)){
-                return false;
-            }
+            return authController.isNameAvaliable(name);
         }
-        return true;
+        return false;
     }
     private String nameValidation(String name){
         if(name.isEmpty()){

@@ -29,9 +29,9 @@ public class AccountController {
         return false;
     }
     public boolean deleteAccount(User user){
-        return userDAO.deleteAccount(user);
+        return accountService.deleteAccount(user);
     }
-    public boolean nameExist(String userName){
-        return userDAO.findNameByName(userName) != null;
+    public boolean nameExist(String name){
+        return accountService.nameExist(name);
     }
 }
