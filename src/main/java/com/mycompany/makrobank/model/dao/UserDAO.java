@@ -24,8 +24,8 @@ public class UserDAO {
         }
     }
     public User findUserByName(String userName){
-        var query = "SELECT name FROM user "
-        + "WHERE * like ?";
+        var query = "SELECT * FROM user "
+        + "WHERE name like ?";
         var db = new DBConnection().getConnection();
         try(var pstmt = db.prepareStatement(query)){
             pstmt.setString(1, userName);
@@ -41,7 +41,7 @@ public class UserDAO {
             }
             return null;
         }catch(SQLException e){
-            System.out.println("A error happen when try set values for the new user." + e.getMessage());
+            System.out.println("A error happen when try get information about the user." + e.getMessage());
             return null;
         }
     }
