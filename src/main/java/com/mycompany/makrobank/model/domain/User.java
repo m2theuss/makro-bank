@@ -13,8 +13,8 @@ public class User {
         this.password = password;
         this.age = age;
         this.balance = new Balance(0);
-        this.token = "";
-        this.salt = "";
+        this.token = null;
+        this.salt = null;
     }
 
     public String getName() {

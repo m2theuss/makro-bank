@@ -33,13 +33,13 @@ public class TokenService {
     }
     public boolean tokenIsValid(String payload){
         try{
-            String[] tmpPayload = getJWT(payload);
+            String[] tmpPayload = getToken(payload);
             if(tmpPayload == null){
                 return false;
             }
             String userHash = tmpPayload[2];
             //the order of the payload is expirationTime, userName and hash in base64 to be compared.
-            String newHash = getJWT(generateTokenHash(tmpPayload[0], tmpPayload[1]))[2];
+            String newHash = getToken(generateTokenHash(tmpPayload[0], tmpPayload[1]))[2];
             if(newHash.equals(userHash)){
                 LocalDateTime ldt = LocalDateTime.parse(tmpPayload[0]);
                 if(ldt.isAfter(LocalDateTime.now())){
@@ -53,7 +53,7 @@ public class TokenService {
             return false;
         }
     }
-    public String[] getJWT(String payload){
+    private String[] getToken(String payload){
         String[] tmpArray = new String(
                 Base64.getDecoder().decode(payload),StandardCharsets.UTF_8
             ).split("\\.");

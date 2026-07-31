@@ -36,6 +36,7 @@ public class UserDAO {
                     rs.getString("password"),
                     rs.getInt("age")
                 );
+                user.setSalt(rs.getString("salt"));
                 user.getBalance().addAmount(rs.getDouble("balance"));
                 return user;
             }

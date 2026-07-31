@@ -1,12 +1,15 @@
 package com.mycompany.makrobank.service;
 import com.mycompany.makrobank.model.dao.UserDAO;
 import com.mycompany.makrobank.model.domain.User;
+import com.mycompany.makrobank.security.TokenService;
 import com.mycompany.makrobank.util.PasswordUtils;
 
 public class AuthService {
     final UserDAO userDAO;
-    public AuthService(UserDAO userDAO){
+    final TokenService tokenService;
+    public AuthService(UserDAO userDAO, TokenService tokenService){
         this.userDAO = userDAO;
+        this.tokenService = tokenService;
     }
     public boolean createUser(User user){
         user.setSalt(
@@ -39,10 +42,10 @@ public class AuthService {
                 )
         );
         if(userPasswordHash.equals(dbUser.getPassword())){
+            dbUser.setToken(tokenService.generateToken(userName));
             return dbUser;
-        } 
+        }
         return null;
-
     }
 }
 

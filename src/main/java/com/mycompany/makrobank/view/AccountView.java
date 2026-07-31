@@ -2,19 +2,15 @@ package com.mycompany.makrobank.view;
 
 import java.util.Random;
 import java.util.Scanner;
-import com.mycompany.makrobank.controller.AccountController;
 import com.mycompany.makrobank.model.domain.User;
 import com.mycompany.makrobank.security.Operations;
-import com.mycompany.makrobank.security.TokenService;
 
 public class AccountView {
     private Scanner scan;
     private Operations operations;
-    private TokenService tokenService;
-    public AccountView(Scanner scan, Operations operations, TokenService tokenService){
+    public AccountView(Scanner scan, Operations operations){
         this.scan = scan;
         this.operations = operations;
-        this.tokenService = tokenService;
     }
 
     public void start(User user){
@@ -28,6 +24,7 @@ public class AccountView {
             String error = executeAction(user, readOptions());
             if(error != null){
                 System.out.println(error);
+                continue;
             }
             break;
         }
@@ -36,7 +33,7 @@ public class AccountView {
         final String INVALID_OPTION = "Please, write some valid option.";
         while(true){
             System.out.println("""
-                [1] - See my balance
+                [1] - See my informations
                 [2] - Make a pix
                 [3] - Deposit
                 [4] - Delete my account
@@ -60,10 +57,7 @@ public class AccountView {
     public String executeAction(User user,int option){
         switch (option){
             case 1 ->{
-                if(tokenIsValid(user)){
-                    return "Your balance is actually: " + user.getBalance().getBalance();
-                }
-                return "Your token wasn't valid anymore.";
+                return printUserInformations(user);
             }
             case 2 -> {
                 if(preparePixPayment(user)){
@@ -211,13 +205,12 @@ public class AccountView {
         char randomWord = (char)(65 + random.nextInt(26));
         return String.valueOf(random.nextInt(9000) + 1000 + randomWord);
     }
-    public void printUserDetails(User user){
-        System.out.println("=========== USER INFORMATIONS ============");
-        System.out.println("Name of the user:" + user.getName());
-        System.out.println("Current balance: " + user.getBalance().getBalance());
-        System.out.println("==========================================");
-    }
-    public boolean tokenIsValid(User user){
-        return tokenService.tokenIsValid(user.getToken());
+    public String printUserInformations(User user){
+        StringBuilder sb = new StringBuilder();
+        sb.append(" =========== USER INFORMATIONS ============").append("\n")
+        .append(" Name of the user: ").append(user.getName()).append("\n")
+        .append(" Current balance: ").append(user.getBalance().getBalance()).append("\n")
+        .append(" ==========================================");
+        return sb.toString();
     }
 }

@@ -19,13 +19,13 @@ public class Main {
         DBInitializer.verifyDB();
         Scanner scan = new Scanner(System.in);
         UserDAO userDAO = new UserDAO();
-        AuthService authService = new AuthService(userDAO);
+        TokenService tokenService = new TokenService();
+        AuthService authService = new AuthService(userDAO, tokenService);
         AuthController authController = new AuthController(authService);
         AccountService accountService = new AccountService(userDAO);
         AccountController accountController = new AccountController(accountService);
-        TokenService tokenService = new TokenService();
         Operations operations = new Operations(accountController, tokenService);
-        AccountView accountView = new AccountView(scan, operations, tokenService);
+        AccountView accountView = new AccountView(scan, operations);
         AuthView authView = new AuthView(scan, authController, accountView);
         authView.start();
     }

@@ -101,7 +101,7 @@ public class AuthView {
                 }   
                 System.out.println(error);
             }
-            String password = readPasswordByChoice(() -> scan.nextLine(), () -> readSecureInput()); 
+            String password = readPasswordByChoice(() -> readText(), () -> readSecureInput()); 
             User user = authController.login(name,password);
             if(user == null){
                 System.out.println("Username or password incorrect, try again.");
@@ -145,29 +145,29 @@ public class AuthView {
         }
     }
     public String readPasswordByChoice(Supplier<String> plainPassword, Supplier <String> hiddenPassword){
-        System.out.print("Do you want hide your password while typing (Y / N)? ");
         while(true){
+            System.out.print("Do you want hide your password while typing (Y / N)? ");
             String choise = scan.nextLine();
             if("n".equalsIgnoreCase(choise)){
-                System.out.print("Type: ");
+                //System.out.print("Type: ");
                 return plainPassword.get();
             }else if("y".equalsIgnoreCase(choise)){
-                System.out.print("Type (wont show): ");
+                //System.out.print("Type (wont show): ");
                 return hiddenPassword.get();
             }
-            System.out.print("Write a valid option (Y / N): ");
+            System.out.println("Write a valid option!");
         }
     }
     private String readPassword(){
         return genericPasswordReader(
             () -> scan.nextLine(),
-            () -> System.out.print("")
+            () -> System.out.print("Type:  ")
         );
     }
     private String readHiddenPassword(){
         return genericPasswordReader(
             () -> readSecureInput(),
-            () -> System.out.print("")
+            () -> System.out.print("Type (wont show): ")
         );
     }
     private String genericPasswordReader(Supplier<String> supplier, Runnable runnable){
@@ -189,6 +189,7 @@ public class AuthView {
         }
     }
     public String readSecureInput(){
+        System.out.print("Type (wont show): ");
         Console console = System.console();
         if(console == null){
             System.out.println("Warning: The program cannot find a console, which means that it's running in an IDE. Please run it in a simple terminal.");
@@ -197,7 +198,10 @@ public class AuthView {
         }
         return String.valueOf(console.readPassword());
     }
-
+    public String readText(){
+        System.out.print("Type: ");
+        return scan.nextLine();
+    }
     private String validatePassword(String password){
         if(password == null){
             return "Null value are not accepted";
