@@ -11,6 +11,9 @@ public class AccountService implements SecurityInterceptor {
     }
     @Override
     public boolean makePixPayment(User sender, String receiverName, double amount){
+        if(sender.getName() == null || receiverName == null){
+            return false;
+        }
         if(sender.getName().equals(receiverName)){
             return false;
         }
@@ -23,6 +26,9 @@ public class AccountService implements SecurityInterceptor {
         return (user.getBalance().getBalance() - amountToTransfer) >= 0;
     }
     private boolean transfer(User sender, String receiverName, double amount){
+        if(sender == null || receiverName == null){
+            return false;
+        }
         boolean senderTransferResult = userDAO.updateBalanceByName(sender.getName(), (amount * -1));
         if(!senderTransferResult){
             return false;
@@ -36,18 +42,31 @@ public class AccountService implements SecurityInterceptor {
         return true;
     }
     private boolean reverseTransfer(String name, double amount){
+        if(name == null){
+            return false;
+        }
         return userDAO.updateBalanceByName(name, amount);
     }
     @Override
     public boolean usernameExist(String name){
-        return userDAO.findUserByName(name).getName() != null;
+        User result = userDAO.findUserByName(name);
+        if(result == null){
+            return false;
+        }
+        return true;
     }
     @Override
     public boolean deleteAccount(User user){
+        if(user == null){
+            return false;
+        }
         return userDAO.deleteAccount(user);
     }
     @Override
     public boolean makeDeposit(User user,double amount){
+        if(user == null){
+            return false;
+        }
         if(userDAO.updateBalanceByName(user.getName(), amount)){
             user.getBalance().addAmount(amount);
             return true;
