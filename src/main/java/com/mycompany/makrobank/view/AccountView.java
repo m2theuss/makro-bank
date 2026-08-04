@@ -169,6 +169,7 @@ public class AccountView {
         while (true) {
             String code = generateConfirmationCode();
             System.out.println("Code: " + code);
+            System.out.print("Type the code above: ");
             String codeInput = scan.nextLine();
             if (codeInput == null) {
                 System.out.println("Input stream closed. Action canceled.");

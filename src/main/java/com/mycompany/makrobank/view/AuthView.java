@@ -149,10 +149,8 @@ public class AuthView {
             System.out.print("Do you want hide your password while typing (Y / N)? ");
             String choise = scan.nextLine();
             if("n".equalsIgnoreCase(choise)){
-                //System.out.print("Type: ");
                 return plainPassword.get();
             }else if("y".equalsIgnoreCase(choise)){
-                //System.out.print("Type (wont show): ");
                 return hiddenPassword.get();
             }
             System.out.println("Write a valid option!");
@@ -161,13 +159,13 @@ public class AuthView {
     private String readPassword(){
         return genericPasswordReader(
             () -> scan.nextLine(),
-            () -> System.out.print("Type:  ")
+            () -> System.out.print("Type: ")
         );
     }
     private String readHiddenPassword(){
         return genericPasswordReader(
             () -> readSecureInput(),
-            () -> System.out.print("Type (wont show): ")
+            () -> System.out.print("Type (won't show): ")
         );
     }
     private String genericPasswordReader(Supplier<String> supplier, Runnable runnable){
@@ -243,7 +241,6 @@ public class AuthView {
             return null;
         }
     }
-
     private void clearConsole() { 
         final String ANSI_CLS = "\u001b[2J"; 
         final String ANSI_HOME = "\u001b[H"; 

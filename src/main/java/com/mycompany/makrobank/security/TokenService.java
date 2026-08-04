@@ -31,7 +31,7 @@ public class TokenService {
         //return a string that contain a payload.
         return Base64.getEncoder().encodeToString(String.join(".", expiration, userName, finalHash).getBytes());
     }
-    public boolean tokenIsValid(String payload){
+    public boolean isTokenValid(String payload){
         try{
             String[] tmpPayload = getToken(payload);
             if(tmpPayload == null){
@@ -47,9 +47,8 @@ public class TokenService {
                 }
             }
             return false;
-
         }catch(IllegalArgumentException e){
-            System.out.println("The value pass to token checker its not a base 64.");
+            System.out.println("The value passed to token checker isn't a base 64.");
             return false;
         }
     }

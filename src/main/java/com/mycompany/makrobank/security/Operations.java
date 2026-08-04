@@ -23,10 +23,11 @@ public class Operations implements SecurityInterceptor{
         return isTokenValid(user.getToken()) && accountController.makeDeposit(user, amount);
     }
     private boolean isTokenValid(String token){
-        return tokenService.tokenIsValid(token);
+        return tokenService.isTokenValid(token);
     }
     public boolean usernameExist(String name){
         return accountController.usernameExist(name);
     }
+    
 
 }
